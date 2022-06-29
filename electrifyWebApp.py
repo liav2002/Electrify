@@ -8,7 +8,7 @@ app.config['SECRET_KEY'] = '584107ac33a499cb87847a6265f3bc1be'
 @app.route("/")
 @app.route("/home")
 def home():
-    return render_template('home.html', posts=posts)
+    return render_template('home.html')
 
 
 @app.route("/about")
