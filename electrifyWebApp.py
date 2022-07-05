@@ -6,14 +6,8 @@ app.config['SECRET_KEY'] = '584107ac33a499cb87847a6265f3bc1be'
 
 
 @app.route("/")
-@app.route("/home")
 def home():
     return render_template('home.html')
-
-
-@app.route("/about")
-def about():
-    return render_template('about.html', title='About')
 
 
 @app.route("/register", methods=['GET', 'POST'])
@@ -22,7 +16,7 @@ def register():
     if form.validate_on_submit():
         flash(f'Account created for {form.username.data}!', 'success')
         return redirect(url_for('home'))
-    return render_template('register.html', title='Register', form=form)
+    return render_template('Register.html', title='Register', form=form)
 
 
 @app.route("/login", methods=['GET', 'POST'])
