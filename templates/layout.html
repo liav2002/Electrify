@@ -48,7 +48,12 @@
           <a href="{{url_for('home') + '#work'}}" class="w3-bar-item w3-button"><i class="fa fa-th"></i> WORK</a>
           <a href="{{url_for('home') + '#pricing'}}" class="w3-bar-item w3-button"><i class="fa fa-usd"></i> PRICING</a>
           <a href="{{url_for('home') + '#contact'}}" class="w3-bar-item w3-button"><i class="fa fa-envelope"></i> CONTACT</a>
-          <a href="{{ url_for('login')}}" class="w3-bar-item w3-button"><i class="fa fa-sign-in"></i> LOGIN </a>
+          {% if isLoggedIn %}
+            <a href="{{ url_for('system')}}" class="w3-bar-item w3-button"><i class="fa fa-sign-in"></i> System </a>
+            <a href="{{ url_for('logout')}}" class="w3-bar-item w3-button"><i class="fa fa-sign-out"></i> LOGOUT </a>
+          {% else %}
+            <a href="{{ url_for('login')}}" class="w3-bar-item w3-button"><i class="fa fa-sign-in"></i> LOGIN </a>
+          {% endif %}
         </div>
         <!-- Hide right-floated links on small screens and replace them with a menu icon -->
         <a href="javascript:void(0)" class="w3-bar-item w3-button w3-right w3-hide-large w3-hide-medium" onclick="w3_open()">
@@ -65,6 +70,12 @@
       <a href="#work" onclick="w3_close()" class="w3-bar-item w3-button">WORK</a>
       <a href="#pricing" onclick="w3_close()" class="w3-bar-item w3-button">PRICING</a>
       <a href="#contact" onclick="w3_close()" class="w3-bar-item w3-button">CONTACT</a>
+      {% if isLoggedIn %}
+        <a href="{{ url_for('system')}}" class="w3-bar-item w3-button"><i class="fa fa-sign-in"></i> System </a>
+        <a href="{{ url_for('logout')}}" class="w3-bar-item w3-button"><i class="fa fa-sign-out"></i> LOGOUT </a>
+      {% else %}
+        <a href="{{ url_for('login')}}" class="w3-bar-item w3-button"><i class="fa fa-sign-in"></i> LOGIN </a>
+      {% endif %}
     </nav>
 
     <!-- add content in other pages -->
@@ -78,7 +89,6 @@
       var captionText = document.getElementById("caption");
       captionText.innerHTML = element.alt;
     }
-
 
     // Toggle between showing and hiding the sidebar when clicking the menu icon
     var mySidebar = document.getElementById("mySidebar");

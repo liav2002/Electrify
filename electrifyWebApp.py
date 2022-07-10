@@ -4,10 +4,18 @@ from forms import RegistrationForm, LoginForm
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '584107ac33a499cb87847a6265f3bc1be'
 
+global isLoggedIn
+isLoggedIn = False
+
 
 @app.route("/")
 def home():
-    return render_template('home.html')
+    return render_template('home.html', isLoggedIn=isLoggedIn)
+
+
+@app.route("/system")
+def system():
+    return render_template('system.html', isLoggedIn=isLoggedIn)
 
 
 @app.route("/register", methods=['GET', 'POST'])
@@ -25,10 +33,22 @@ def login():
     if form.validate_on_submit():
         if form.email.data == 'admin@electrify.com' and form.password.data == '1234':
             flash('You have been logged in!', 'success')
+            global isLoggedIn
+            isLoggedIn = True
             return redirect(url_for('home'))
         else:
             flash('Login Unsuccessful. Please check username and password', 'danger')
     return render_template('login.html', title='Login', form=form)
+
+
+@app.route("/logout")
+def logout():
+    flash('You have been logged out', 'success')
+
+    global isLoggedIn
+    isLoggedIn = False
+
+    return redirect(url_for('home'))
 
 
 if __name__ == '__main__':
