@@ -24,8 +24,17 @@ def system():
 def register():
     form = RegistrationForm()
     if form.validate_on_submit():
-        flash(f'Account created for {form.username.data}!', 'success')
-        return redirect(url_for('home'))
+        if add_user(app.config['DATABASE'], form.id.data, form.username.data, form.email.data, form.password.data,
+                    form.phone.data, form.first_name.data, form.last_name.data) and add_credit(app.config['DATABASE'],
+                                                                                               form.id.data,
+                                                                                               form.c_number.data,
+                                                                                               form.cvv.data,
+                                                                                               form.c_month.data,
+                                                                                               form.c_year.data):
+            flash(f'Account created for {form.username.data}!', 'success')
+            return redirect(url_for('home'))
+        else:
+            flash(f'Failed to create account.', 'danger')
     return render_template('Register.html', title='Register', form=form)
 
 
@@ -33,7 +42,7 @@ def register():
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        if form.email.data == 'admin@electrify.com' and form.password.data == '1234':
+        if check_login_fields(app.config['DATABASE'], form.email.data, form.password.data):
             flash('You have been logged in!', 'success')
             global isLoggedIn
             isLoggedIn = True
