@@ -1,8 +1,10 @@
 from flask import Flask, render_template, url_for, flash, redirect
 from forms import RegistrationForm, LoginForm
+from sql import *
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '584107ac33a499cb87847a6265f3bc1be'
+app.config['DATABASE'] = 'ElectrifyDataBase.sqlite'
 
 global isLoggedIn
 isLoggedIn = False
