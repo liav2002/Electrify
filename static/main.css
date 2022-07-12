@@ -16,3 +16,46 @@ body, html {
 .w3-bar .w3-button {
   padding: 16px;
 }
+
+/* Battery */
+.battery {
+    background-color: #fff;
+    border: 2px solid #000;
+    height: 32px;
+    position: relative;
+    width: 100px;
+    margin-top: -15px
+}
+
+.battery:after {
+    background-color: #fff;
+    border: 2px solid #000;
+    content: "";
+    display: block;
+    height: 16px;
+    position: absolute;
+    right: -6px;
+    top: 6px;
+    width: 6px;
+}
+
+.battery .battery-level-high {
+    background-color: #66CD00;
+    height: 100%;
+    width: 20%
+    text-align: center;
+}
+
+.battery .battery-level-medium {
+    background-color: #FCD116;
+    height: 100%;
+    width: 20%
+    text-align: center;
+}
+
+.battery .battery-level-low {
+    background-color: #FF3333;
+    height: 100%;
+    width: 20%
+    text-align: center;
+}

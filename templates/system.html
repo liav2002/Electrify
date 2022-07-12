@@ -1,6 +1,23 @@
 {% extends "layout.html" %}
 {% block content %}
-<div class="w3-container w3-light-grey" style="padding:128px 16px">
-    <h1>Still in development</h1>
+
+<div class="w3-container w3-light-grey" style="padding:148px 8px 512px">
+    <div><p><b>Battery</b></p></div>
+    <div class="battery">
+        {% if battery >= 50 %}
+            <div class="battery-level-high" style="width: {{battery}}%">
+                <div class="w3-center" style="width: 100px">{{battery}}%</div>
+            </div>
+        {% elif battery > 25 %}
+            <div class="battery-level-medium" style="width: {{battery}}%">
+                <div class="w3-center" style="width: 100px">{{battery}}%</div>
+            </div>
+        {% else %}
+            <div class="battery-level-low" style="width: {{battery}}%">
+                <div class="w3-center" style="width: 100px">{{battery}}%</div>
+            </div>
+        {% endif %}
+    </div>
 </div>
+
 {% endblock content %}
