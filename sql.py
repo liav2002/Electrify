@@ -37,7 +37,7 @@ def check_login_fields(email, password):
     return status
 
 
-def add_user(id, username, email, password, phone, first_name, last_name):
+def add_user(id, username, email, password, phone, first_name, last_name, address, plan):
     """ Add new User to Users table """
 
     status = True
@@ -45,8 +45,9 @@ def add_user(id, username, email, password, phone, first_name, last_name):
     try:
         sqlHandler = create_connection()
 
-        query = f"INSERT INTO Users (ID, Username, Email, Password, Phone, FirstName, LastName) " \
-                f"VALUES ({id}, '{username}', '{email}', '{password}', '{phone}', '{first_name}', '{last_name}');"
+        query = f"INSERT INTO Users (ID, Username, Email, Password, Phone, FirstName, LastName, Address, Plan) " \
+                f"VALUES ({id}, '{username}', '{email}', '{password}', '{phone}', '{first_name}', '{last_name}', " \
+                f"'{address}', '{plan}'); "
         sqlHandler.execute(query)
 
         sqlHandler.commit()
@@ -59,7 +60,7 @@ def add_user(id, username, email, password, phone, first_name, last_name):
     return status
 
 
-def add_credit(user_id, c_number, cvv, c_month, c_year):
+def add_credit(user_id, name_on_card, c_number, cvv, c_month, c_year):
     """ Add new Credit to Credit table """
 
     status = True
@@ -67,8 +68,8 @@ def add_credit(user_id, c_number, cvv, c_month, c_year):
     try:
         sqlHandler = create_connection()
 
-        query = f"INSERT INTO Credits (UserID, C_Number, CVV, C_Month, C_Year)" \
-                f"VALUES ({user_id}, '{c_number}', {cvv}, '{c_month}', {c_year});"
+        query = f"INSERT INTO Credits (UserID, Name_On_Card, C_Number, CVV, C_Month, C_Year)" \
+                f"VALUES ({user_id}, '{name_on_card}','{c_number}', {cvv}, '{c_month}', {c_year});"
         sqlHandler.execute(query)
 
         sqlHandler.commit()
@@ -153,3 +154,57 @@ def get_battery_capacity(user_id):
     except Error as e:
         print("ERROR:get_battery_capacity: " + str(e))
         return -1
+
+
+def is_userID_unique(user_id):
+    try:
+        sqlHandler = create_connection()
+
+        query = f"SELECT COUNT(*) FROM Users WHERE ID={user_id};"
+        cursor = sqlHandler.execute(query)
+        result = cursor.fetchone()[0]
+
+        sqlHandler.commit()
+        sqlHandler.close()
+
+    except Error as e:
+        print("ERROR:is_userID_unique: " + str(e))
+        result = -1
+
+    return result == 0
+
+
+def is_username_unique(username):
+    try:
+        sqlHandler = create_connection()
+
+        query = f"SELECT COUNT(*) FROM Users WHERE Username='{username}';"
+        cursor = sqlHandler.execute(query)
+        result = cursor.fetchone()[0]
+
+        sqlHandler.commit()
+        sqlHandler.close()
+
+    except Error as e:
+        print("ERROR:is_username_unique: " + str(e))
+        result = -1
+
+    return result == 0
+
+
+def is_email_unique(email):
+    try:
+        sqlHandler = create_connection()
+
+        query = f"SELECT COUNT(*) FROM Users WHERE Email='{email}';"
+        cursor = sqlHandler.execute(query)
+        result = cursor.fetchone()[0]
+
+        sqlHandler.commit()
+        sqlHandler.close()
+
+    except Error as e:
+        print("ERROR:is_username_unique: " + str(e))
+        result = -1
+
+    return result == 0

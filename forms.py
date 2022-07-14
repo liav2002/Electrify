@@ -6,13 +6,14 @@ from wtforms.validators import DataRequired, Length, Email, EqualTo, number_rang
 class RegistrationForm(FlaskForm):
     # User details
     id = IntegerField("User's ID",
-                           validators=[DataRequired(), number_range(min=11111111, max=999999999)])
+                      validators=[DataRequired()])
     first_name = StringField("First Name",
                              validators=[DataRequired(), Length(min=2, max=20)])
     last_name = StringField("Last Name",
                             validators=[DataRequired(), Length(min=2, max=20)])
     username = StringField('Username',
                            validators=[DataRequired(), Length(min=2, max=20)])
+    address = StringField('Address')
     phone = StringField('Phone Number')
     email = StringField('Email',
                         validators=[DataRequired(), Email()])
@@ -22,6 +23,7 @@ class RegistrationForm(FlaskForm):
     submit = SubmitField('Sign Up')
 
     # Credit details
+    plan = SelectField("Plan", choices=["Basic", "Pro", "Premium"], validators=[DataRequired()])
     name_on_card = StringField('Name On Card',
                                validators=[DataRequired(), Length(min=2, max=20)])
     c_number = StringField('Credit Card Number',
