@@ -121,7 +121,20 @@ def register():
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        print("\n\tlogin pressed !!!\n")
+        # secure user's input
+
+        try:  # check email
+            Secure.check_email(form.email.data)
+        except Exception as e:
+            form.email.errors += str(e)
+            return render_template('login.html', title='Login', form=form)
+
+        try:  # check password
+            Secure.check_password(form.password.data)
+        except Exception as e:
+            form.password.errors += str(e)
+            return render_template('login.html', title='Login', form=form)
+
         if check_login_fields(form.email.data, form.password.data):
             flash('You have been logged in!', 'success')
             global user_id
@@ -130,7 +143,6 @@ def login():
         else:
             flash('Login Unsuccessful. Please check username and password', 'danger')
 
-    print("\n\tDon't validate on submit\n")
     return render_template('login.html', title='Login', form=form)
 
 
