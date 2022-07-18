@@ -45,7 +45,7 @@ def register():
             return render_template('Register.html', title='Register', form=form)
 
         try:  # check email
-            Secure.check_email(form.email.data)
+            Secure.check_email(form.email.data, False)
         except Exception as e:
             form.email.errors += str(e)
             return render_template('Register.html', title='Register', form=form)
@@ -124,7 +124,7 @@ def login():
         # secure user's input
 
         try:  # check email
-            Secure.check_email(form.email.data)
+            Secure.check_email(form.email.data, True)
         except Exception as e:
             form.email.errors += str(e)
             return render_template('login.html', title='Login', form=form)

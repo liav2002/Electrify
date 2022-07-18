@@ -5,8 +5,8 @@ def sqlInjection(value):
     black_list = ['&', '|', '~', '=', "DROP", "drop", "WHERE", "where", "ALTER", "alter", "UPDATE", "update", "OR",
                   "or", "AND", "and"]
 
-    for var in black_list:
-        if str(value).find(var) != -1:
+    for char in str(value):
+        if char in black_list:
             raise Exception("You really try it now ?!")
 
 
@@ -39,12 +39,12 @@ def check_username(username):
         raise Exception("Username\talready\tregistered\tin\tthe\tsystem.")
 
 
-def check_email(email):
+def check_email(email, login):
     # before get into database, secure from sqlInjection
     sqlInjection(email)
 
     # Final, check if it is unique
-    if not (sql.is_email_unique(email)):
+    if not (sql.is_email_unique(email)) and not(login):
         raise Exception("Email already registered in the system.")
 
 
