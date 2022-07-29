@@ -21,9 +21,9 @@ body, html {
 .battery {
     background-color: #fff;
     border: 2px solid #000;
-    height: 32px;
+    height: 60px;
     position: relative;
-    width: 100px;
+    width: 500px;
     margin-top: -15px
 }
 
@@ -35,7 +35,7 @@ body, html {
     height: 16px;
     position: absolute;
     right: -6px;
-    top: 6px;
+    top: 21px;
     width: 6px;
 }
 
@@ -58,4 +58,5 @@ body, html {
     height: 100%;
     width: 20%
     text-align: center;
+
 }
