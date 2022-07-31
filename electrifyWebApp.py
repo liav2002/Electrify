@@ -110,7 +110,7 @@ def register():
                                form.c_month.data,
                                form.c_year.data) and generate_battery(form.id.data):
             flash(f'Account created for {form.username.data}!', 'success')
-            return redirect(url_for('home'))
+            return redirect(url_for('system'))
         else:
             flash(f'Failed to create account. Please contact our support team.', 'danger')
 

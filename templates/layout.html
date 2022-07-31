@@ -37,7 +37,7 @@
     <!-- logo -->
     <div class="w3-bar w3-white w3-card" id="myNavbar">
         {% if isLoggedIn %}
-        <a href="{{ url_for('system') }}" class="w3-bar-item">
+        <a href="{{ url_for('system') + '#'}}" class="w3-bar-item">
             <img alt="Quires" src="static/images/logo.png"
                  width="120" height="60">
         </a>
@@ -50,10 +50,10 @@
         <!-- Right-sided navbar links -->
         <div class="w3-right w3-hide-small">
             {% if isLoggedIn %}
-                <a href="{{url_for('system')}}" class="w3-bar-item w3-button"><i class="fa fa-battery"></i> BATTERY</a>
-                <a href="{{url_for('system')}}" class="w3-bar-item w3-button"><i class="fa fa-bolt"></i> CONSUMPTION</a>
-                <a href="{{url_for('system')}}" class="w3-bar-item w3-button"><i class="fa fa-lightbulb-o"></i> INSIGHT</a>
-                <a href="{{url_for('system')}}" class="w3-bar-item w3-button"><i class="fa fa-user"></i> MY-ACCOUNT</a>
+                <a href="{{url_for('system') + '#battery'}}" class="w3-bar-item w3-button"><i class="fa fa-battery"></i> BATTERY</a>
+                <a href="{{url_for('system') + '#consumption'}}" class="w3-bar-item w3-button"><i class="fa fa-line-chart"></i> CONSUMPTION</a>
+                <a href="{{url_for('system') + '#insight'}}" class="w3-bar-item w3-button"><i class="fa fa-lightbulb-o"></i> INSIGHT</a>
+                <a href="{{url_for('system') + '#my-account'}}" class="w3-bar-item w3-button"><i class="fa fa-user"></i> MY-ACCOUNT</a>
                 <a href="{{url_for('logout')}}" class="w3-bar-item w3-button"><i class="fa fa-sign-out"></i> LOGOUT</a>
             {% else %}
                 <a href="{{url_for('home') + '#about'}}" class="w3-bar-item w3-button">ABOUT</a>
