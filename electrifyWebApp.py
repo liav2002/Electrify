@@ -139,7 +139,7 @@ def login():
             flash('You have been logged in!', 'success')
             global user_id
             user_id = get_user_id_by_email(form.email.data)
-            return redirect(url_for('home'))
+            return redirect(url_for('system'))
         else:
             flash('Login Unsuccessful. Please check username and password', 'danger')
 
