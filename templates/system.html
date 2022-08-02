@@ -21,34 +21,6 @@
 <head>
     <!--Battery-->
     <style>.p { font-family: "Copperplate", Copperplate, Fantasy;} </style>
-    <!--graph-->
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script type="text/javascript">
-      google.charts.load('current', {'packages':['corechart']});
-      google.charts.setOnLoadCallback(drawChart);
-
-      function drawChart() {
-        var data = google.visualization.arrayToDataTable([
-          ['hours', '',],
-          ['00:00',  1000 ],
-          ['01:00',  1170 ],
-          ['02:00',  660 ],
-          ['03:00',  1030 ],
-          ['04:00', 500]]);
-
-        var options = {
-          title: 'consumpsion',
-          curveType: 'function',
-          hAxis: {title: 'Time (hours)'},
-          vAxis: {title: 'consumpsion (wh/kg)'},
-          backgroundColor: { fill: "#f1f1f1" }
-        };
-
-        var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
-
-        chart.draw(data, options);
-      }
-    </script>
 </head>
 
 <body>
@@ -95,9 +67,130 @@
                 </div>
             </div>
         </div>
-        <!--graph-->
-        <div id="curve_chart" style="width: 800; height: 450px;"></div>
     </div>
-</body>
 
+        <!--graphs-->
+       <!--daily use graph-->
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart);
+
+      function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+          ['hours', '',],
+          ['00:00',  1000 ],
+          ['01:00',  1170 ],
+          ['02:00',  660 ],
+          ['03:00',  1030 ],
+          ['04:00', 500]]);
+
+        var options = {
+          title: 'consumption',
+          curveType: 'function',
+          hAxis: {title: 'Time (hours)'},
+          vAxis: {title: 'consumpsion (wh/kg)'},
+          backgroundColor: { fill: "#f1f1f1" }
+        };
+
+        var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+
+        chart.draw(data, options);
+      }
+    </script>
+        <div id="curve_chart" style="width: 800; height: 450px;"></div>
+
+    <div id= consumption>
+        <!-- yearly graph-->
+   <div id="yearly" style="width: 1000px; height: 650px;"></div>
+    <script>google.charts.load('current', {packages: ['corechart', 'bar']});
+    google.charts.setOnLoadCallback(drawBasic);
+
+    function drawBasic() {
+      var data = new google.visualization.DataTable();
+      data.addColumn('string', 'Month');
+      data.addColumn('number', 'Consumption');
+
+      data.addRows([
+        ['January',1,],
+        ['February',5],
+        ['March',10],
+        ['April',8],
+        ['May', 7],
+        ['June', 2],
+        ['July',  11],
+        ['August',  6],
+        ['September', 4],
+        ['October',  3],
+        ['November',  9],
+        ['December',   5],
+      ]);
+
+      var options = {
+        colors: ['#66CD00'],
+        title: 'Yearly Consumption',
+        hAxis: {
+          title: 'Months',
+        },
+        vAxis: {
+          title: 'Consumption (Wh/kg)'
+        }
+      };
+
+      var chart = new google.visualization.ColumnChart(
+        document.getElementById('yearly'));
+
+      chart.draw(data, options);
+    }
+    </script>
+
+        <!--monthly graph-->
+        <div id="monthly"style="width: 1000px; height: 650px;"></div>
+    <script>google.charts.load('current', {packages: ['corechart', 'bar']});
+    google.charts.setOnLoadCallback(drawBasic);
+
+    function drawBasic() {
+      var data = new google.visualization.DataTable();
+      data.addColumn('string', 'Month');
+      data.addColumn('number', 'Consumption');
+
+      data.addRows([
+        ['1.8',1,],
+        ['2.8',5],
+        ['3.8',10],
+        ['4.8',8],
+        ['5.8', 7],
+        ['6.8', 2],
+        ['7.8',  11],
+        ['8.8',  6],
+        ['9.8', 4],
+        ['10.8',  3],
+        ['11.8',  9],
+        ['12.8',   5],
+      ]);
+
+      var options = {
+        colors: ['#006600'],
+        title: 'monthly Consumption',
+        hAxis: {
+          title: 'days',
+        },
+        vAxis: {
+          title: 'Consumption (Wh/kg)'
+        }
+      };
+
+      var chart = new google.visualization.ColumnChart(
+        document.getElementById('monthly'));
+
+      chart.draw(data, options);
+    }
+    </script>
+        <div class="w3-button w3-black  w3-col m6 ">Monthly</div>
+        <div class="w3-button w3-black  w3-col m6 ">Yearly</div>
+
+    </div>
+</div>
+
+</body>
 {% endblock content %}
