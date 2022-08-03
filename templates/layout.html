@@ -47,15 +47,31 @@
                  width="120" height="60">
         </a>
         {% endif %}
-        <!-- Right-sided navbar links -->
-        <div class="w3-right w3-hide-small">
+
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+            <!--Avatar-->
             {% if isLoggedIn %}
+            <style>
+            .avatar {
+             vertical-align: middle;
+            width: 60px;
+            height: 60px;
+             border-radius:50%;
+            }
+            </style>
+            <img src="static/images/avatar.png" alt="Avatar" class="avatar column w3">
+
+        <!-- Right-sided navbar links -->
+                <div class="w3-right w3-hide-small">
                 <a href="{{url_for('system') + '#battery'}}" class="w3-bar-item w3-button"><i class="fa fa-battery"></i> BATTERY</a>
                 <a href="{{url_for('system') + '#consumption'}}" class="w3-bar-item w3-button"><i class="fa fa-line-chart"></i> CONSUMPTION</a>
                 <a href="{{url_for('system') + '#insight'}}" class="w3-bar-item w3-button"><i class="fa fa-lightbulb-o"></i> INSIGHT</a>
                 <a href="{{url_for('system') + '#my-account'}}" class="w3-bar-item w3-button"><i class="fa fa-user"></i> MY-ACCOUNT</a>
                 <a href="{{url_for('logout')}}" class="w3-bar-item w3-button"><i class="fa fa-sign-out"></i> LOGOUT</a>
             {% else %}
+                    <div class="w3-right w3-hide-small">
                 <a href="{{url_for('home') + '#about'}}" class="w3-bar-item w3-button">ABOUT</a>
                 <a href="{{url_for('home') + '#team'}}" class="w3-bar-item w3-button"><i class="fa fa-users"></i> TEAM</a>
                 <a href="{{url_for('home') + '#work'}}" class="w3-bar-item w3-button"><i class="fa fa-th"></i> WORK</a>
@@ -122,8 +138,7 @@
     function w3_close() {
         mySidebar.style.display = "none";
     }
-
-
 </script>
+
 </body>
 </html>
