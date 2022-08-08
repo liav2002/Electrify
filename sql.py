@@ -14,27 +14,9 @@ def create_connection():
         print("ERROR:create_connection: " + str(e))
 
 
-def check_login_fields(email, password):
-    """ Checks whether the user is registered to the system and whether the password is correct """
-
-    status = True
-
-    try:
-        sqlHandler = create_connection()
-
-        query = f"SELECT COUNT(*) FROM Users WHERE Email = '{email}' AND Password = '{password}';"
-        cursor = sqlHandler.execute(query)
-        if cursor.fetchone()[0] != 1:
-            status = False
-
-        sqlHandler.commit()
-        sqlHandler.close()
-
-    except Exception as e:
-        print("ERROR:check_login_fields: " + str(e))
-        status = False
-
-    return status
+###############################################################################################################
+#                                    add to database functions:                                               #
+###############################################################################################################
 
 
 def add_user(id, username, email, password, phone, first_name, last_name, address, plan):
@@ -104,56 +86,32 @@ def add_battery(id, user_id, capacity, consumption):
     return status
 
 
-def get_number_of_batteries():
+###############################################################################################################
+#                                       validate data functions:                                              #
+###############################################################################################################
+
+
+def check_login_fields(email, password):
+    """ Checks whether the user is registered to the system and whether the password is correct """
+
+    status = True
+
     try:
         sqlHandler = create_connection()
 
-        query = f"SELECT COUNT(*) FROM Batteries;"
+        query = f"SELECT COUNT(*) FROM Users WHERE Email = '{email}' AND Password = '{password}';"
         cursor = sqlHandler.execute(query)
-        result = cursor.fetchone()[0]
+        if cursor.fetchone()[0] != 1:
+            status = False
 
         sqlHandler.commit()
         sqlHandler.close()
 
-    except Error as e:
-        print("ERROR:get_number_of_batteries: " + str(e))
-        result = -1
+    except Exception as e:
+        print("ERROR:check_login_fields: " + str(e))
+        status = False
 
-    return result
-
-
-def get_user_id_by_email(email):
-    try:
-        sqlHandler = create_connection()
-        query = f"SELECT ID FROM Users WHERE Email='{email}';"
-        cursor = sqlHandler.execute(query)
-        rows = cursor.fetchall()
-
-        if len(rows) != 0:
-            return int(rows[0][0])
-        else:
-            return 0
-
-    except Error as e:
-        print("ERROR:get_user_id_by_email: " + str(e))
-        return 0
-
-
-def get_battery_capacity(user_id):
-    try:
-        sqlHandler = create_connection()
-        query = f"SELECT Capacity FROM Batteries WHERE UserID={user_id};"
-        cursor = sqlHandler.execute(query)
-        rows = cursor.fetchall()
-
-        if len(rows) != 0:
-            return float(rows[0][0])
-        else:
-            return -1
-
-    except Error as e:
-        print("ERROR:get_battery_capacity: " + str(e))
-        return -1
+    return status
 
 
 def is_userID_unique(user_id):
@@ -208,3 +166,531 @@ def is_email_unique(email):
         result = -1
 
     return result == 0
+
+
+###############################################################################################################
+#                                         getters functions:                                                  #
+###############################################################################################################
+
+
+def get_number_of_batteries():
+    try:
+        sqlHandler = create_connection()
+
+        query = f"SELECT COUNT(*) FROM Batteries;"
+        cursor = sqlHandler.execute(query)
+        result = cursor.fetchone()[0]
+
+        sqlHandler.commit()
+        sqlHandler.close()
+
+    except Error as e:
+        print("ERROR:get_number_of_batteries: " + str(e))
+        result = -1
+
+    return result
+
+
+def get_user_id_by_email(email):
+    try:
+        sqlHandler = create_connection()
+        query = f"SELECT ID FROM Users WHERE Email='{email}';"
+        cursor = sqlHandler.execute(query)
+        rows = cursor.fetchall()
+
+        if len(rows) != 0:
+            return int(rows[0][0])
+        else:
+            return 0
+
+    except Error as e:
+        print("ERROR:get_user_id_by_email: " + str(e))
+        return 0
+
+
+def get_battery_capacity(user_id):
+    try:
+        sqlHandler = create_connection()
+        query = f"SELECT Capacity FROM Batteries WHERE UserID={user_id};"
+        cursor = sqlHandler.execute(query)
+        rows = cursor.fetchall()
+
+        if len(rows) != 0:
+            return float(rows[0][0])
+        else:
+            return -1
+
+    except Error as e:
+        print("ERROR:get_battery_capacity: " + str(e))
+        return -1
+
+
+def get_username(user_id):
+    try:
+        sqlHandler = create_connection()
+        query = f"SELECT Username FROM Users WHERE ID={user_id};"
+        cursor = sqlHandler.execute(query)
+        rows = cursor.fetchall()
+
+        if len(rows) != 0:
+            return rows[0][0]
+        else:
+            return -1
+
+    except Error as e:
+        print("ERROR:get_username: " + str(e))
+        return -1
+
+
+def get_email(user_id):
+    try:
+        sqlHandler = create_connection()
+        query = f"SELECT Email FROM Users WHERE ID={user_id};"
+        cursor = sqlHandler.execute(query)
+        rows = cursor.fetchall()
+
+        if len(rows) != 0:
+            return rows[0][0]
+        else:
+            return -1
+
+    except Error as e:
+        print("ERROR:get_email: " + str(e))
+        return -1
+
+
+def get_password(user_id):
+    try:
+        sqlHandler = create_connection()
+        query = f"SELECT Password FROM Users WHERE ID={user_id};"
+        cursor = sqlHandler.execute(query)
+        rows = cursor.fetchall()
+
+        if len(rows) != 0:
+            return rows[0][0]
+        else:
+            return -1
+
+    except Error as e:
+        print("ERROR:get_password: " + str(e))
+        return -1
+
+
+def get_phone(user_id):
+    try:
+        sqlHandler = create_connection()
+        query = f"SELECT Phone FROM Users WHERE ID={user_id};"
+        cursor = sqlHandler.execute(query)
+        rows = cursor.fetchall()
+
+        if len(rows) != 0:
+            return rows[0][0]
+        else:
+            return -1
+
+    except Error as e:
+        print("ERROR:get_phone: " + str(e))
+        return -1
+
+
+def get_first_name(user_id):
+    try:
+        sqlHandler = create_connection()
+        query = f"SELECT FirstName FROM Users WHERE ID={user_id};"
+        cursor = sqlHandler.execute(query)
+        rows = cursor.fetchall()
+
+        if len(rows) != 0:
+            return rows[0][0]
+        else:
+            return -1
+
+    except Error as e:
+        print("ERROR:get_first_name: " + str(e))
+        return -1
+
+
+def get_last_name(user_id):
+    try:
+        sqlHandler = create_connection()
+        query = f"SELECT LastName FROM Users WHERE ID={user_id};"
+        cursor = sqlHandler.execute(query)
+        rows = cursor.fetchall()
+
+        if len(rows) != 0:
+            return rows[0][0]
+        else:
+            return -1
+
+    except Error as e:
+        print("ERROR:get_last_name: " + str(e))
+        return -1
+
+
+def get_address(user_id):
+    try:
+        sqlHandler = create_connection()
+        query = f"SELECT Address FROM Users WHERE ID={user_id};"
+        cursor = sqlHandler.execute(query)
+        rows = cursor.fetchall()
+
+        if len(rows) != 0:
+            return rows[0][0]
+        else:
+            return -1
+
+    except Error as e:
+        print("ERROR:get_address: " + str(e))
+        return -1
+
+
+def get_plan(user_id):
+    try:
+        sqlHandler = create_connection()
+        query = f"SELECT Plan FROM Users WHERE ID={user_id};"
+        cursor = sqlHandler.execute(query)
+        rows = cursor.fetchall()
+
+        if len(rows) != 0:
+            return rows[0][0]
+        else:
+            return -1
+
+    except Error as e:
+        print("ERROR:get_plan: " + str(e))
+        return -1
+
+
+def get_name_on_card(user_id):
+    try:
+        sqlHandler = create_connection()
+        query = f"SELECT Name_On_Card FROM Credits WHERE UserID={user_id};"
+        cursor = sqlHandler.execute(query)
+        rows = cursor.fetchall()
+
+        if len(rows) != 0:
+            return rows[0][0]
+        else:
+            return -1
+
+    except Error as e:
+        print("ERROR:get_name_on_card: " + str(e))
+        return -1
+
+
+def get_c_number(user_id):
+    try:
+        sqlHandler = create_connection()
+        query = f"SELECT C_Number FROM Credits WHERE UserID={user_id};"
+        cursor = sqlHandler.execute(query)
+        rows = cursor.fetchall()
+
+        if len(rows) != 0:
+            return rows[0][0]
+        else:
+            return -1
+
+    except Error as e:
+        print("ERROR:get_c_number: " + str(e))
+        return -1
+
+
+def get_cvv(user_id):
+    try:
+        sqlHandler = create_connection()
+        query = f"SELECT CVV FROM Credits WHERE UserID={user_id};"
+        cursor = sqlHandler.execute(query)
+        rows = cursor.fetchall()
+
+        if len(rows) != 0:
+            return int(rows[0][0])
+        else:
+            return -1
+
+    except Error as e:
+        print("ERROR:get_cvv: " + str(e))
+        return -1
+
+
+def get_c_month(user_id):
+    try:
+        sqlHandler = create_connection()
+        query = f"SELECT C_Month FROM Credits WHERE UserID={user_id};"
+        cursor = sqlHandler.execute(query)
+        rows = cursor.fetchall()
+
+        if len(rows) != 0:
+            return rows[0][0]
+        else:
+            return -1
+
+    except Error as e:
+        print("ERROR:get_c_month: " + str(e))
+        return -1
+
+
+def get_c_year(user_id):
+    try:
+        sqlHandler = create_connection()
+        query = f"SELECT C_Year FROM Credits WHERE UserID={user_id};"
+        cursor = sqlHandler.execute(query)
+        rows = cursor.fetchall()
+
+        if len(rows) != 0:
+            return int(rows[0][0])
+        else:
+            return -1
+
+    except Error as e:
+        print("ERROR:get_c_year: " + str(e))
+        return -1
+
+
+###############################################################################################################
+#                                         update functions:                                                   #
+###############################################################################################################
+
+
+def update_username(user_id, username):
+    status = True
+
+    try:
+        sqlHandler = create_connection()
+        query = f"Update Users SET Username='{username}' WHERE ID={user_id};"
+        sqlHandler.execute(query)
+
+        sqlHandler.commit()
+        sqlHandler.close()
+    except Error as e:
+        print("ERROR:update_username: " + str(e))
+        status = False
+
+    return status
+
+
+def update_email(user_id, email):
+    status = True
+
+    try:
+        sqlHandler = create_connection()
+
+        query = f"Update Users SET Email='{email}' WHERE ID={user_id};"
+        sqlHandler.execute(query)
+
+        sqlHandler.commit()
+        sqlHandler.close()
+
+    except Error as e:
+        print("ERROR:update_email: " + str(e))
+        status = False
+
+    return status
+
+
+def update_password(user_id, password):
+    status = True
+
+    try:
+        sqlHandler = create_connection()
+
+        query = f"Update Users SET Password='{password}' WHERE ID={user_id};"
+        sqlHandler.execute(query)
+
+        sqlHandler.commit()
+        sqlHandler.close()
+
+    except Error as e:
+        print("ERROR:update_password: " + str(e))
+        status = False
+
+    return status
+
+
+def update_phone(user_id, phone):
+    status = True
+
+    try:
+        sqlHandler = create_connection()
+
+        query = f"Update Users SET Phone='{phone}' WHERE ID={user_id};"
+        sqlHandler.execute(query)
+
+        sqlHandler.commit()
+        sqlHandler.close()
+
+    except Error as e:
+        print("ERROR:update_phone: " + str(e))
+        status = False
+
+    return status
+
+
+def update_first_name(user_id, first_name):
+    status = True
+
+    try:
+        sqlHandler = create_connection()
+
+        query = f"Update Users SET FirstName='{first_name}' WHERE ID={user_id};"
+        sqlHandler.execute(query)
+
+        sqlHandler.commit()
+        sqlHandler.close()
+
+    except Error as e:
+        print("ERROR:update_first_name: " + str(e))
+        status = False
+
+    return status
+
+
+def update_last_name(user_id, last_name):
+    status = True
+
+    try:
+        sqlHandler = create_connection()
+
+        query = f"Update Users SET LastName='{last_name}' WHERE ID={user_id};"
+        sqlHandler.execute(query)
+
+        sqlHandler.commit()
+        sqlHandler.close()
+
+    except Error as e:
+        print("ERROR:update_last_name: " + str(e))
+        status = False
+
+    return status
+
+
+def update_address(user_id, address):
+    status = True
+
+    try:
+        sqlHandler = create_connection()
+
+        query = f"Update Users SET Address='{address}' WHERE ID={user_id};"
+        sqlHandler.execute(query)
+
+        sqlHandler.commit()
+        sqlHandler.close()
+
+    except Error as e:
+        print("ERROR:update_address: " + str(e))
+        status = False
+
+    return status
+
+
+def update_plan(user_id, plan):
+    status = True
+
+    try:
+        sqlHandler = create_connection()
+
+        query = f"Update Users SET Plan='{plan}' WHERE ID={user_id};"
+        sqlHandler.execute(query)
+
+        sqlHandler.commit()
+        sqlHandler.close()
+
+    except Error as e:
+        print("ERROR:update_plan: " + str(e))
+        status = False
+
+    return status
+
+
+def update_name_on_card(user_id, name_on_card):
+    status = True
+
+    try:
+        sqlHandler = create_connection()
+
+        query = f"Update Credits SET Name_On_Card='{name_on_card}' WHERE UserID={user_id};"
+        sqlHandler.execute(query)
+
+        sqlHandler.commit()
+        sqlHandler.close()
+
+    except Error as e:
+        print("ERROR:update_name_on_card: " + str(e))
+        status = False
+
+    return status
+
+
+def update_c_number(user_id, c_number):
+    status = True
+
+    try:
+        sqlHandler = create_connection()
+
+        query = f"Update Credits SET C_Number='{c_number}' WHERE UserID={user_id};"
+        sqlHandler.execute(query)
+
+        sqlHandler.commit()
+        sqlHandler.close()
+
+    except Error as e:
+        print("ERROR:update_c_number: " + str(e))
+        status = False
+
+    return status
+
+
+def update_cvv(user_id, cvv):
+    status = True
+
+    try:
+        sqlHandler = create_connection()
+
+        query = f"Update Credits SET CVV={cvv} WHERE UserID={user_id};"
+        sqlHandler.execute(query)
+
+        sqlHandler.commit()
+        sqlHandler.close()
+
+    except Error as e:
+        print("ERROR:update_cvv: " + str(e))
+        status = False
+
+    return status
+
+
+def update_c_month(user_id, c_month):
+    status = True
+
+    try:
+        sqlHandler = create_connection()
+
+        query = f"Update Credits SET C_Month='{c_month}' WHERE UserID={user_id};"
+        sqlHandler.execute(query)
+
+        sqlHandler.commit()
+        sqlHandler.close()
+
+    except Error as e:
+        print("ERROR:update_c_month: " + str(e))
+        status = False
+
+    return status
+
+
+def update_c_year(user_id, c_year):
+    status = True
+
+    try:
+        sqlHandler = create_connection()
+
+        query = f"Update Credits SET C_Year={c_year} WHERE UserID={user_id};"
+        sqlHandler.execute(query)
+
+        sqlHandler.commit()
+        sqlHandler.close()
+
+    except Error as e:
+        print("ERROR:update_c_year: " + str(e))
+        status = False
+
+    return status
