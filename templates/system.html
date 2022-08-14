@@ -76,18 +76,20 @@
 
           function drawChart() {
             var data = google.visualization.arrayToDataTable([
-              ['hours', '',],
-              ['00:00',  1000 ],
-              ['01:00',  1170 ],
-              ['02:00',  660 ],
-              ['03:00',  1030 ],
-              ['04:00', 500]]);
+                {% for k, v in daily_consumption.items() %}
+                    {% if v is string %}
+                        ['{{ k }}', '{{ v }}'],
+                    {% else %}
+                        ['{{ k }}', {{ v }}],
+                    {% endif %}
+                {% endfor %}
+            ]);
 
             var options = {
               title: 'consumption',
               curveType: 'function',
               hAxis: {title: 'Time (hours)'},
-              vAxis: {title: 'consumpsion (wh/kg)'},
+              vAxis: {title: 'consumpsion (KW/H)'},
               backgroundColor: { fill: "#f1f1f1" }
             };
 
@@ -109,40 +111,34 @@
             google.charts.setOnLoadCallback(drawBasic);
 
             function drawBasic() {
-              var data = new google.visualization.DataTable();
-              data.addColumn('string', 'Month');
-              data.addColumn('number', 'Consumption');
+                var data = google.visualization.arrayToDataTable([
+                    {% for k, v in yearly_consumption.items() %}
+                        {% if v is string %}
+                            ['{{ k }}', '{{ v }}'],
+                        {% else %}
+                            ['{{ k }}', {{ v }}],
+                        {% endif %}
+                    {% endfor %}
+                ]);
 
-              data.addRows([
-                ['January',1,],
-                ['February',5],
-                ['March',10],
-                ['April',8],
-                ['May', 7],
-                ['June', 2],
-                ['July',  11],
-                ['August',  6],
-                ['September', 4],
-                ['October',  3],
-                ['November',  9],
-                ['December',   5],
-              ]);
+                date = new Date();
+                year = date.getFullYear();
 
-              var options = {
-                colors: ['#66CD00'],
-                title: 'Yearly Consumption',
-                hAxis: {
-                  title: 'Months',
-                },
-                vAxis: {
-                  title: 'Consumption (Wh/kg)'
-                }
-              };
+                var options = {
+                    colors: ['#66CD00'],
+                    title: year,
+                    hAxis: {
+                        title: 'Months',
+                    },
+                    vAxis: {
+                        title: 'Consumption (KW/H)'
+                    }
+                };
 
-              var chart = new google.visualization.ColumnChart(
-                document.getElementById('yearly'));
+                var chart = new google.visualization.ColumnChart(
+                    document.getElementById('yearly'));
 
-              chart.draw(data, options);
+                chart.draw(data, options);
             }
         </script>
         <div id="yearly" class="consumptionGraph"></div>
@@ -153,40 +149,34 @@
             google.charts.setOnLoadCallback(drawBasic);
 
             function drawBasic() {
-              var data = new google.visualization.DataTable();
-              data.addColumn('string', 'Month');
-              data.addColumn('number', 'Consumption');
+                var data = google.visualization.arrayToDataTable([
+                    {% for k, v in monthly_consumption.items() %}
+                        {% if v is string %}
+                            ['{{ k }}', '{{ v }}'],
+                        {% else %}
+                            ['{{ k }}', {{ v }}],
+                        {% endif %}
+                    {% endfor %}
+                ]);
 
-              data.addRows([
-                ['1.8',1,],
-                ['2.8',5],
-                ['3.8',10],
-                ['4.8',8],
-                ['5.8', 7],
-                ['6.8', 2],
-                ['7.8',  11],
-                ['8.8',  6],
-                ['9.8', 4],
-                ['10.8',  3],
-                ['11.8',  9],
-                ['12.8',   5],
-              ]);
+                date = new Date();
+                month = date.toLocaleString('default', { month: 'long' });
 
-              var options = {
-                colors: ['#006600'],
-                title: 'monthly Consumption',
-                hAxis: {
-                  title: 'days',
-                },
-                vAxis: {
-                  title: 'Consumption (Wh/kg)'
-                }
-              };
+                var options = {
+                    colors: ['#006600'],
+                    title: month,
+                    hAxis: {
+                        title: 'days',
+                    },
+                    vAxis: {
+                        title: 'Consumption (KW/H)'
+                    }
+                };
 
-              var chart = new google.visualization.ColumnChart(
-                document.getElementById('monthly'));
+                var chart = new google.visualization.ColumnChart(
+                    document.getElementById('monthly'));
 
-              chart.draw(data, options);
+                chart.draw(data, options);
             }
         </script>
         <div id="monthly" class="consumptionGraph"></div>

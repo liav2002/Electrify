@@ -132,9 +132,15 @@ def system():
                 return redirect(url_for('system') + "#my-account")
 
         return render_template('system.html', isLoggedIn=user_id != 0, battery=get_battery_capacity(user_id),
-                               username=username, email=email, password=password, phone=phone, first_name=first_name,
+                               username=username, email=email, password=password, phone=phone,
+                               first_name=first_name,
                                last_name=last_name, address=address, plan=plan, name_on_card=name_on_card,
-                               c_number=c_number, cvv=cvv, c_month=c_month, c_year=c_year, form=form, title="System")
+                               c_number=c_number, cvv=cvv, c_month=c_month, c_year=c_year,
+                               daily_consumption=get_daily_consumption(user_id),
+                               monthly_consumption=get_monthly_consumption(user_id),
+                               yearly_consumption=get_yearly_consumption(user_id),
+                               form=form, title="System")
+
     else:
         return redirect(url_for('home'))
 
@@ -234,6 +240,7 @@ def register():
 @app.route("/login", methods=['GET', 'POST'])
 def login():
     form = LoginForm()
+
     if form.validate_on_submit():
         # secure user's input
 

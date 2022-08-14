@@ -1,5 +1,7 @@
 import sqlite3
 from sqlite3 import Error
+from datetime import datetime
+import calendar
 
 db_file = 'ElectrifyDataBase.sqlite'
 
@@ -81,6 +83,28 @@ def add_battery(id, user_id, capacity, consumption):
 
     except Error as e:
         print("ERROR:add_battery: " + str(e))
+        status = False
+
+    return status
+
+
+def add_sample(id, user_id, time, power, voltage):
+    """ Add new Sample to Samples table """
+
+    status = True
+
+    try:
+        sqlHandler = create_connection()
+
+        query = f"INSERT INTO Samples (ID, UserID, Time, Power, Voltage)" \
+                f"VALUES ({id}, {user_id}, '{time}', {power}, {voltage});"
+        sqlHandler.execute(query)
+
+        sqlHandler.commit()
+        sqlHandler.close()
+
+    except Error as e:
+        print("ERROR:add_sample: " + str(e))
         status = False
 
     return status
@@ -443,6 +467,83 @@ def get_c_year(user_id):
 
     except Error as e:
         print("ERROR:get_c_year: " + str(e))
+        return -1
+
+
+def get_daily_consumption(user_id):
+    try:
+        sqlHandler = create_connection()
+        consumption = {"Hour": "Power"}
+        hours_filters = ['00:%', '01:%', '02:%', '03:%', '04:%', '05:%', '06:%', '07:%', '08:%', '09:%', '10:%', '11:%',
+                         '12:%', '13:%', '14:%', '15:%', '16:%', '17:%', '18:%', '19:%', '20:%', '21:%', '22:%', '23:%']
+
+        for filter in hours_filters:
+            query = f"SELECT SUM(Power) FROM Samples WHERE UserID={user_id} AND time(Time) LIKE '{filter}';"
+            cursor = sqlHandler.execute(query)
+            rows = cursor.fetchall()
+            if rows[0][0] is None:
+                consumption[filter[0:2] + ":00"] = 0
+            else:
+                consumption[filter[0:2] + ":00"] = rows[0][0]
+
+        return consumption
+
+    except Error as e:
+        print("ERROR:get_daily_consumption: " + str(e))
+        return -1
+
+
+def get_monthly_consumption(user_id):
+    try:
+        sqlHandler = create_connection()
+        consumption = {"Hour": "Power"}
+
+        currentMonth = datetime.today().month
+        if currentMonth < 10:
+            monthFilter = '%-0' + str(currentMonth) + '-%'
+        else:
+            monthFilter = '%-' + str(currentMonth) + '-%'
+
+        filters = ['%-01', '%-02', '%-03', '%-04', '%-05', '%-06', '%-07', '%-08', '%-09', '%-10', '%-11', '%-12',
+                   '%-13', '%-14', '%-15', '%-16', '%-17', '%-18', '%-19', '%-20', '%-21', '%-22', '%-23', '%-24',
+                   '%-25', '%-26', '%-27', '%-28', '%-29', '%-30', '%-31']
+
+        for dayFilter in filters:
+            query = f"SELECT SUM(Power) FROM Samples WHERE UserID={user_id} AND date(Time) LIKE '{monthFilter}' AND date(Time) LIKE '{dayFilter}';"
+            cursor = sqlHandler.execute(query)
+            rows = cursor.fetchall()
+            if rows[0][0] is None:
+                consumption[dayFilter[2:]] = 0
+            else:
+                consumption[dayFilter[2:]] = rows[0][0]
+
+        return consumption
+
+    except Error as e:
+        print("ERROR:get_monthly_consumption: " + str(e))
+        return -1
+
+
+def get_yearly_consumption(user_id):
+    try:
+        sqlHandler = create_connection()
+        consumption = {"Day": "Power"}
+        filters = ['%-01-%', '%-02-%', '%-03-%', '%-04-%', '%-05-%', '%-06-%',
+                   '%-07-%', '%-08-%', '%-09-%', '%-10-%', '%-11-%', '%-12-%']
+
+        for filter in filters:
+            query = f"SELECT SUM(Power) FROM Samples WHERE UserID={user_id} AND date(Time) LIKE '{filter}';"
+            cursor = sqlHandler.execute(query)
+            rows = cursor.fetchall()
+            if rows[0][0] is None:
+                consumption[calendar.month_name[int(filter[3])]] = 0
+            else:
+                consumption[calendar.month_name[int(filter[3])]] = rows[0][0]
+
+        return consumption
+
+    except Error as e:
+        print("ERROR:get_yearly_consumption: " + str(e))
         return -1
 
 
