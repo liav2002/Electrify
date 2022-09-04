@@ -53,28 +53,28 @@ clear: both;
 .battery .battery-level-high {
     background-color: #66CD00;
     height: 100%;
-    width: 20%
+    width: 20%;
     text-align: center;
 }
 
 .battery .battery-level-medium {
     background-color: #FCD116;
     height: 100%;
-    width: 20%
+    width: 20%;
     text-align: center;
 }
 
 .battery .battery-level-low {
     background-color: #FF3333;
     height: 100%;
-    width: 20%
+    width: 20%;
     text-align: center;
 }
 
 .battery .battery-consumption{
     background-color: #5A5A5A;
     height: 100%;
-    width: 20%
+    width: 20%;
     text-align: center;
 }
 
