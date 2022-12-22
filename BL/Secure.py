@@ -1,4 +1,4 @@
-import sql
+from DAL import sql
 
 
 def sqlInjection(value):

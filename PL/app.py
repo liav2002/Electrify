@@ -1,13 +1,16 @@
 from flask import Flask, render_template, url_for, flash, redirect
-
-from sql import *
-from battery import generate_battery
 from forms import RegistrationForm, LoginForm, AccountForm
-import Secure
+
+from DAL.sql import *
+
+from BL.battery import generate_battery
+from BL import Secure
+from BL.os_detect import is_raspberrypi
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '584107ac33a499cb87847a6265f3bc1be'
 
+RASPBERRY_PI = is_raspberrypi()
 user_id = 0
 
 
@@ -220,7 +223,7 @@ def register():
             form.cvv.errors += str(e)
             return render_template('Register.html', title='Register', form=form)
 
-        # try add user to our database
+        # try to add user to our database
         if add_user(form.id.data, form.username.data, form.email.data, form.password.data,
                     form.phone.data, form.first_name.data, form.last_name.data, form.address.data, form.plan.data) \
                 and add_credit(form.id.data,
@@ -260,6 +263,11 @@ def login():
             flash('You have been logged in!', 'success')
             global user_id
             user_id = get_user_id_by_email(form.email.data)
+
+            if RASPBERRY_PI:
+                # TODO: run background thread to use INA219 for measure Voltage, Power and update battery capacity
+                pass
+
             return redirect(url_for('system'))
         else:
             flash('Login Unsuccessful. Please check username and password', 'danger')

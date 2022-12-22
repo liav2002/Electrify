@@ -3,7 +3,7 @@ from sqlite3 import Error
 from datetime import datetime
 import calendar
 
-db_file = 'ElectrifyDataBase.sqlite'
+db_file = 'DAL/ElectrifyDataBase.sqlite'
 
 
 def create_connection():
@@ -21,7 +21,7 @@ def create_connection():
 ###############################################################################################################
 
 
-def add_user(id, username, email, password, phone, first_name, last_name, address, plan):
+def add_user(Id, username, email, password, phone, first_name, last_name, address, plan):
     """ Add new User to Users table """
 
     status = True
@@ -30,7 +30,7 @@ def add_user(id, username, email, password, phone, first_name, last_name, addres
         sqlHandler = create_connection()
 
         query = f"INSERT INTO Users (ID, Username, Email, Password, Phone, FirstName, LastName, Address, Plan) " \
-                f"VALUES ({id}, '{username}', '{email}', '{password}', '{phone}', '{first_name}', '{last_name}', " \
+                f"VALUES ({Id}, '{username}', '{email}', '{password}', '{phone}', '{first_name}', '{last_name}', " \
                 f"'{address}', '{plan}'); "
         sqlHandler.execute(query)
 
@@ -66,7 +66,7 @@ def add_credit(user_id, name_on_card, c_number, cvv, c_month, c_year):
     return status
 
 
-def add_battery(id, user_id, capacity, consumption):
+def add_battery(Id, user_id, capacity, consumption):
     """ Add new Battery to Batteries table """
 
     status = True
@@ -75,7 +75,7 @@ def add_battery(id, user_id, capacity, consumption):
         sqlHandler = create_connection()
 
         query = f"INSERT INTO Batteries (ID, UserID, Capacity, Consumption)" \
-                f"VALUES ({id}, {user_id}, {capacity}, {consumption});"
+                f"VALUES ({Id}, {user_id}, {capacity}, {consumption});"
         sqlHandler.execute(query)
 
         sqlHandler.commit()
@@ -88,7 +88,7 @@ def add_battery(id, user_id, capacity, consumption):
     return status
 
 
-def add_sample(id, user_id, time, power, voltage):
+def add_sample(Id, user_id, time, power, voltage):
     """ Add new Sample to Samples table """
 
     status = True
@@ -97,7 +97,7 @@ def add_sample(id, user_id, time, power, voltage):
         sqlHandler = create_connection()
 
         query = f"INSERT INTO Samples (ID, UserID, Time, Power, Voltage)" \
-                f"VALUES ({id}, {user_id}, '{time}', {power}, {voltage});"
+                f"VALUES ({Id}, {user_id}, '{time}', {power}, {voltage});"
         sqlHandler.execute(query)
 
         sqlHandler.commit()
@@ -210,6 +210,24 @@ def get_number_of_batteries():
 
     except Error as e:
         print("ERROR:get_number_of_batteries: " + str(e))
+        result = -1
+
+    return result
+
+
+def get_number_of_samples(user_id):
+    try:
+        sqlHandler = create_connection()
+
+        query = f"SELECT COUNT(*) FROM Samples WHERE UserID={user_id};"
+        cursor = sqlHandler.execute(query)
+        result = cursor.fetchone()[0]
+
+        sqlHandler.commit()
+        sqlHandler.close()
+
+    except Error as e:
+        print("ERROR:get_number_of_samples: " + str(e))
         result = -1
 
     return result
@@ -477,14 +495,14 @@ def get_daily_consumption(user_id):
         hours_filters = ['00:%', '01:%', '02:%', '03:%', '04:%', '05:%', '06:%', '07:%', '08:%', '09:%', '10:%', '11:%',
                          '12:%', '13:%', '14:%', '15:%', '16:%', '17:%', '18:%', '19:%', '20:%', '21:%', '22:%', '23:%']
 
-        for filter in hours_filters:
-            query = f"SELECT SUM(Power) FROM Samples WHERE UserID={user_id} AND time(Time) LIKE '{filter}';"
+        for f in hours_filters:
+            query = f"SELECT SUM(Power) FROM Samples WHERE UserID={user_id} AND time(Time) LIKE '{f}';"
             cursor = sqlHandler.execute(query)
             rows = cursor.fetchall()
             if rows[0][0] is None:
-                consumption[filter[0:2] + ":00"] = 0
+                consumption[f[0:2] + ":00"] = 0
             else:
-                consumption[filter[0:2] + ":00"] = rows[0][0]
+                consumption[f[0:2] + ":00"] = rows[0][0]
 
         return consumption
 
@@ -531,14 +549,14 @@ def get_yearly_consumption(user_id):
         filters = ['%-01-%', '%-02-%', '%-03-%', '%-04-%', '%-05-%', '%-06-%',
                    '%-07-%', '%-08-%', '%-09-%', '%-10-%', '%-11-%', '%-12-%']
 
-        for filter in filters:
-            query = f"SELECT SUM(Power) FROM Samples WHERE UserID={user_id} AND date(Time) LIKE '{filter}';"
+        for f in filters:
+            query = f"SELECT SUM(Power) FROM Samples WHERE UserID={user_id} AND date(Time) LIKE '{f}';"
             cursor = sqlHandler.execute(query)
             rows = cursor.fetchall()
             if rows[0][0] is None:
-                consumption[calendar.month_name[int(filter[3])]] = 0
+                consumption[calendar.month_name[int(f[3])]] = 0
             else:
-                consumption[calendar.month_name[int(filter[3])]] = rows[0][0]
+                consumption[calendar.month_name[int(f[3])]] = rows[0][0]
 
         return consumption
 
