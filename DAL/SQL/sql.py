@@ -2,8 +2,11 @@ import sqlite3
 from sqlite3 import Error
 from datetime import datetime
 import calendar
+import os
 
-db_file = 'DAL/SQL/ElectrifyDataBase.sqlite'
+# get db file path
+DAL_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+db_file = os.path.join(DAL_path, "SQL", "ElectrifyDataBase.sqlite")
 
 
 def create_connection():
