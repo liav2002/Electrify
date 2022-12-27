@@ -42,17 +42,17 @@
             <div class="column">
                 <h2><p class="p">Battery</p></h2>
                 <div class="battery">
-                    {% if battery >= 50 %}
-                        <div class="battery-level-high" style="width: {{battery}}%">
-                            <div class="w3-center w3-xlarge" style="width: 500px ">{{battery}}%</div>
+                    {% if battery.capacity >= 50 %}
+                        <div class="battery-level-high" style="width: {{battery.capacity}}%">
+                            <div class="w3-center w3-xlarge" style="width: 500px ">{{battery.capacity}}%</div>
                         </div>
-                    {% elif battery > 25 %}
-                        <div class="battery-level-medium" style="width: {{battery}}%">
-                            <div class="w3-center" style="width: 500px">{{battery}}%</div>
+                    {% elif battery.capacity > 25 %}
+                        <div class="battery-level-medium" style="width: {{battery.capacity}}%">
+                            <div class="w3-center" style="width: 500px">{{battery.capacity}}%</div>
                         </div>
                     {% else %}
-                         <div class="battery-level-low" style="width: {{battery}}%">
-                            <div class="w3-center" style="width: 500px">{{battery}}%</div>
+                         <div class="battery-level-low" style="width: {{battery.capacity}}%">
+                            <div class="w3-center" style="width: 500px">{{battery.capacity}}%</div>
                         </div>
                     {% endif %}
                 </div>
@@ -61,8 +61,8 @@
             <div class="column">
                 <h2><p class="p">Battery's life</p></h2>
                 <div class="battery">
-                    <div class="battery-consumption" style="width: {{battery}}%">
-                        <div class="w3-center w3-xlarge" style="width: 500px ">20KWh</div>
+                    <div class="battery-consumption" style="width: {{battery.consumption * 5}}%">
+                        <div class="w3-center w3-xlarge" style="width: 500px ">{{ battery.consumption }}KWh</div>
                     </div>
                 </div>
             </div>
@@ -212,56 +212,56 @@
                 {{ form.username.label(class="form-control-label") }}
 
                 {% if form.username.errors %}
-                {{ form.username(value=username, class="form-control form-control-lg is-invalid") }}
+                {{ form.username(value=user.username, class="form-control form-control-lg is-invalid") }}
                 <div class="invalid-feedback">
                     {% for error in form.username.errors %}
                     <span>{{ error }}</span>
                     {% endfor %}
                 </div>
                 {% else %}
-                {{ form.username(value=username, class="form-control form-control-lg") }}
+                {{ form.username(value=user.username, class="form-control form-control-lg") }}
                 {% endif %}
             </div>
             <!-- Email's Form -->
             <div class="form-group">
                 {{ form.email.label(class="form-control-label") }}
                 {% if form.email.errors %}
-                {{ form.email(value=email, class="form-control form-control-lg is-invalid") }}
+                {{ form.email(value=user.email, class="form-control form-control-lg is-invalid") }}
                 <div class="invalid-feedback">
                     {% for error in form.email.errors %}
                     <span>{{ error }}</span>
                     {% endfor %}
                 </div>
                 {% else %}
-                {{ form.email(value=email, class="form-control form-control-lg") }}
+                {{ form.email(value=user.email, class="form-control form-control-lg") }}
                 {% endif %}
             </div>
             <!-- Password's Form -->
             <div class="form-group">
                 {{ form.password.label(class="form-control-label") }}
                 {% if form.password.errors %}
-                {{ form.password(value=password, class="form-control form-control-lg is-invalid") }}
+                {{ form.password(value=user.password, class="form-control form-control-lg is-invalid") }}
                 <div class="invalid-feedback">
                     {% for error in form.password.errors %}
                     <span>{{ error }}</span>
                     {% endfor %}
                 </div>
                 {% else %}
-                {{ form.password(value=password, class="form-control form-control-lg") }}
+                {{ form.password(value=user.password, class="form-control form-control-lg") }}
                 {% endif %}
             </div>
             <!-- ConfirmPassword's Form -->
             <div class="form-group">
                 {{ form.confirm_password.label(class="form-control-label") }}
                 {% if form.confirm_password.errors %}
-                {{ form.confirm_password(value=password, class="form-control form-control-lg is-invalid") }}
+                {{ form.confirm_password(value=user.password, class="form-control form-control-lg is-invalid") }}
                 <div class="invalid-feedback">
                     {% for error in form.confirm_password.errors %}
                     <span>{{ error }}</span>
                     {% endfor %}
                 </div>
                 {% else %}
-                {{ form.confirm_password(value=password, class="form-control form-control-lg") }}
+                {{ form.confirm_password(value=user.password, class="form-control form-control-lg") }}
                 {% endif %}
             </div>
         </fieldset>
@@ -276,14 +276,14 @@
                 {{ form.first_name.label(class="form-control-label") }}
 
                 {% if form.first_name.errors %}
-                {{ form.first_name(value=first_name, class="form-control form-control-lg is-invalid") }}
+                {{ form.first_name(value=user.first_name, class="form-control form-control-lg is-invalid") }}
                 <div class="invalid-feedback">
                     {% for error in form.first_name.errors %}
                     <span>{{ error }}</span>
                     {% endfor %}
                 </div>
                 {% else %}
-                {{ form.first_name(value=first_name, class="form-control form-control-lg") }}
+                {{ form.first_name(value=user.first_name, class="form-control form-control-lg") }}
                 {% endif %}
             </div>
             <!-- LastName's Form -->
@@ -291,14 +291,14 @@
                 {{ form.last_name.label(class="form-control-label") }}
 
                 {% if form.last_name.errors %}
-                {{ form.last_name(value=last_name, class="form-control form-control-lg is-invalid") }}
+                {{ form.last_name(value=user.last_name, class="form-control form-control-lg is-invalid") }}
                 <div class="invalid-feedback">
                     {% for error in form.last_name.errors %}
                     <span>{{ error }}</span>
                     {% endfor %}
                 </div>
                 {% else %}
-                {{ form.last_name(value=last_name, class="form-control form-control-lg") }}
+                {{ form.last_name(value=user.last_name, class="form-control form-control-lg") }}
                 {% endif %}
             </div>
             <!-- Address' Form -->
@@ -306,14 +306,14 @@
                 {{ form.address.label(class="form-control-label") }}
 
                 {% if form.address.errors %}
-                {{ form.address(value=address, class="form-control form-control-lg is-invalid") }}
+                {{ form.address(value=user.address, class="form-control form-control-lg is-invalid") }}
                 <div class="invalid-feedback">
                     {% for error in form.address.errors %}
                     <span>{{ error }}</span>
                     {% endfor %}
                 </div>
                 {% else %}
-                {{ form.address(value=address, class="form-control form-control-lg") }}
+                {{ form.address(value=user.address, class="form-control form-control-lg") }}
                 {% endif %}
             </div>
             <!-- Phone's Form -->
@@ -321,14 +321,14 @@
                 {{ form.phone.label(class="form-control-label") }}
 
                 {% if form.phone.errors %}
-                {{ form.phone(value=phone, class="form-control form-control-lg is-invalid") }}
+                {{ form.phone(value=user.phone, class="form-control form-control-lg is-invalid") }}
                 <div class="invalid-feedback">
                     {% for error in form.phone.errors %}
                     <span>{{ error }}</span>
                     {% endfor %}
                 </div>
                 {% else %}
-                {{ form.phone(value=phone, class="form-control form-control-lg") }}
+                {{ form.phone(value=user.phone, class="form-control form-control-lg") }}
                 {% endif %}
             </div>
         </fieldset>
@@ -349,84 +349,84 @@
             <div class="form-group">
                 {{ form.plan.label(class="form-control-label") }}
                 {% if form.plan.errors %}
-                {{ form.plan(value=plan, class="form-control form-control-lg is-invalid") }}
+                {{ form.plan(value=user.plan, class="form-control form-control-lg is-invalid") }}
                 <div class="invalid-feedback">
                     {% for error in form.plan.errors %}
                     <span>{{ error }}</span>
                     {% endfor %}
                 </div>
                 {% else %}
-                {{ form.plan(value=plan, class="form-control form-control-lg") }}
+                {{ form.plan(value=user.plan, class="form-control form-control-lg") }}
                 {% endif %}
             </div>
             <!-- NameOnCard's Form -->
             <div class="form-group">
                 {{ form.name_on_card.label(class="form-control-label") }}
                 {% if form.name_on_card.errors %}
-                {{ form.name_on_card(value=name_on_card, class="form-control form-control-lg is-invalid") }}
+                {{ form.name_on_card(value=credit.name_on_card, class="form-control form-control-lg is-invalid") }}
                 <div class="invalid-feedback">
                     {% for error in form.name_on_card.errors %}
                     <span>{{ error }}</span>
                     {% endfor %}
                 </div>
                 {% else %}
-                {{ form.name_on_card(value=name_on_card, class="form-control form-control-lg") }}
+                {{ form.name_on_card(value=credit.name_on_card, class="form-control form-control-lg") }}
                 {% endif %}
             </div>
             <!-- C_Number's Form -->
             <div class="form-group">
                 {{ form.c_number.label(class="form-control-label") }}
                 {% if form.c_number.errors %}
-                {{ form.c_number(value=c_number, class="form-control form-control-lg is-invalid") }}
+                {{ form.c_number(value=credit.c_number, class="form-control form-control-lg is-invalid") }}
                 <div class="invalid-feedback">
                     {% for error in form.c_number.errors %}
                     <span>{{ error }}</span>
                     {% endfor %}
                 </div>
                 {% else %}
-                {{ form.c_number(value=c_number, class="form-control form-control-lg") }}
+                {{ form.c_number(value=credit.c_number, class="form-control form-control-lg") }}
                 {% endif %}
             </div>
             <!-- C_Month's Form -->
             <div class="form-group">
                 {{ form.c_month.label(class="form-control-label") }}
                 {% if form.c_month.errors %}
-                {{ form.c_month(value=c_month, class="form-control form-control-lg is-invalid") }}
+                {{ form.c_month(value=credit.c_month, class="form-control form-control-lg is-invalid") }}
                 <div class="invalid-feedback">
                     {% for error in form.c_month.errors %}
                     <span>{{ error }}</span>
                     {% endfor %}
                 </div>
                 {% else %}
-                {{ form.c_month(value=c_month, class="form-control form-control-lg") }}
+                {{ form.c_month(value=credit.c_month, class="form-control form-control-lg") }}
                 {% endif %}
             </div>
             <!-- C_Year's Form -->
             <div class="form-group">
                 {{ form.c_year.label(class="form-control-label") }}
                 {% if form.c_year.errors %}
-                {{ form.c_year(value=c_year, class="form-control form-control-lg is-invalid") }}
+                {{ form.c_year(value=credit.c_year, class="form-control form-control-lg is-invalid") }}
                 <div class="invalid-feedback">
                     {% for error in form.c_year.errors %}
                     <span>{{ error }}</span>
                     {% endfor %}
                 </div>
                 {% else %}
-                {{ form.c_year(value=c_year, class="form-control form-control-lg") }}
+                {{ form.c_year(value=credit.c_year, class="form-control form-control-lg") }}
                 {% endif %}
             </div>
             <!-- CVV's Form -->
             <div class="form-group">
                 {{ form.cvv.label(class="form-control-label") }}
                 {% if form.cvv.errors %}
-                {{ form.cvv(value=cvv, class="form-control form-control-lg is-invalid") }}
+                {{ form.cvv(value=credit.cvv, class="form-control form-control-lg is-invalid") }}
                 <div class="invalid-feedback">
                     {% for error in form.cvv.errors %}
                     <span>{{ error }}</span>
                     {% endfor %}
                 </div>
                 {% else %}
-                {{ form.cvv(value=cvv, class="form-control form-control-lg") }}
+                {{ form.cvv(value=credit.cvv, class="form-control form-control-lg") }}
                 {% endif %}
             </div>
         </fieldset>

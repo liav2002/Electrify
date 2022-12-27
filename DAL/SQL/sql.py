@@ -3,7 +3,7 @@ from sqlite3 import Error
 from datetime import datetime
 import calendar
 
-db_file = 'DAL/ElectrifyDataBase.sqlite'
+db_file = 'DAL/SQL/ElectrifyDataBase.sqlite'
 
 
 def create_connection():
@@ -250,10 +250,27 @@ def get_user_id_by_email(email):
         return 0
 
 
-def get_battery_capacity(user_id):
+def get_battery_id(user_id):
     try:
         sqlHandler = create_connection()
-        query = f"SELECT Capacity FROM Batteries WHERE UserID={user_id};"
+        query = f"SELECT ID FROM Batteries WHERE UserID={user_id};"
+        cursor = sqlHandler.execute(query)
+        rows = cursor.fetchall()
+
+        if len(rows) != 0:
+            return int(rows[0][0])
+        else:
+            return -1
+
+    except Error as e:
+        print("ERROR:get_battery_id: " + str(e))
+        return -1
+
+
+def get_battery_capacity(battery_id):
+    try:
+        sqlHandler = create_connection()
+        query = f"SELECT Capacity FROM Batteries WHERE ID={battery_id};"
         cursor = sqlHandler.execute(query)
         rows = cursor.fetchall()
 
@@ -264,6 +281,23 @@ def get_battery_capacity(user_id):
 
     except Error as e:
         print("ERROR:get_battery_capacity: " + str(e))
+        return -1
+
+
+def get_battery_consumption(battery_id):
+    try:
+        sqlHandler = create_connection()
+        query = f"SELECT Consumption FROM Batteries WHERE ID={battery_id};"
+        cursor = sqlHandler.execute(query)
+        rows = cursor.fetchall()
+
+        if len(rows) != 0:
+            return float(rows[0][0])
+        else:
+            return -1
+
+    except Error as e:
+        print("ERROR:get_battery_consumption: " + str(e))
         return -1
 
 

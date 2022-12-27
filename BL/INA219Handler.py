@@ -1,4 +1,4 @@
-from DAL.sql import *
+from DAL.SQL.sql import *
 import datetime
 from time import sleep
 from ina219 import INA219

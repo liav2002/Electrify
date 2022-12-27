@@ -1,9 +1,13 @@
 from flask import Flask, render_template, url_for, flash, redirect
 from forms import RegistrationForm, LoginForm, AccountForm
 
-from DAL.sql import *
+from DAL.SQL.sql import add_user, add_credit, add_battery, \
+    get_user_id_by_email, get_number_of_batteries, check_login_fields, \
+    get_daily_consumption, get_monthly_consumption, get_yearly_consumption
+from DAL.Entities.User import User
+from DAL.Entities.Credit import Credit
+from DAL.Entities.Battery import Battery
 
-from BL.battery import generate_battery
 from BL import Secure
 from BL.os_detect import is_raspberrypi
 
@@ -23,122 +27,108 @@ def home():
 def system():
     if user_id != 0:
         form = AccountForm()
-        username = get_username(user_id)
-        email = get_email(user_id)
-        password = get_password(user_id)
-        phone = get_phone(user_id)
-        first_name = get_first_name(user_id)
-        last_name = get_last_name(user_id)
-        address = get_address(user_id)
-        plan = get_plan(user_id)
-        name_on_card = get_name_on_card(user_id)
-        c_number = get_c_number(user_id)
-        cvv = get_cvv(user_id)
-        c_month = get_c_month(user_id)
-        c_year = get_c_year(user_id)
+        user = User(user_id)
+        credit = Credit(user_id)
+        battery = Battery(user_id)
 
         # check if there is data to update
         if form.validate_on_submit():
-            if form.username.data != username:
+            if form.username.data != user.username:
                 try:  # check username input (security)
                     Secure.check_username(form.username.data)
-                    update_username(user_id, form.username.data)
+                    user.update_username(form.username.data)
                     return redirect(url_for('system') + "#my-account")
                 except Exception as e:
                     form.username.errors += str(e)
 
-            if form.email.data != email:
+            if form.email.data != user.email:
                 try:  # check email input (security)
                     Secure.check_email(form.email.data, False)
-                    update_email(user_id, form.email.data)
+                    user.update_email(form.email.data)
                     return redirect(url_for('system') + "#my-account")
                 except Exception as e:
                     form.email.errors += str(e)
 
-            if form.password.data != password:
+            if form.password.data != user.password:
                 try:  # check password input (security)
                     Secure.check_password(form.password.data)
-                    update_password(user_id, form.password.data)
+                    user.update_password(form.password.data)
                     return redirect(url_for('system') + "#my-account")
                 except Exception as e:
                     form.password.errors += str(e)
 
-            if form.phone.data != phone:
+            if form.phone.data != user.phone:
                 try:  # check phone input (security)
                     Secure.check_phone(form.phone.data)
-                    update_phone(user_id, form.phone.data)
+                    user.update_phone(form.phone.data)
                     return redirect(url_for('system') + "#my-account")
                 except Exception as e:
                     form.phone.errors += str(e)
 
-            if form.first_name.data != first_name:
+            if form.first_name.data != user.first_name:
                 try:  # check first name input (security)
                     Secure.check_first_name(form.first_name.data)
-                    update_first_name(user_id, form.first_name.data)
+                    user.update_first_name(form.first_name.data)
                     return redirect(url_for('system') + "#my-account")
                 except Exception as e:
                     form.first_name.errors += str(e)
 
-            if form.last_name.data != last_name:
+            if form.last_name.data != user.last_name:
                 try:  # check last name input (security)
                     Secure.check_last_name(form.last_name.data)
-                    update_last_name(user_id, form.last_name.data)
+                    user.update_last_name(form.last_name.data)
                     return redirect(url_for('system') + "#my-account")
                 except Exception as e:
                     form.last_name.errors += str(e)
 
-            if form.address.data != address:
+            if form.address.data != user.address:
                 try:  # check address input (security)
                     Secure.check_address(form.address.data)
-                    update_address(user_id, form.address.data)
+                    user.update_address(form.address.data)
                     return redirect(url_for('system') + "#my-account")
                 except Exception as e:
                     form.address.errors += str(e)
 
-            if form.plan.data != plan:
+            if form.plan.data != user.plan:
                 # there is no input in this case, because we use select button -> no security problem.
-                update_plan(user_id, form.plan.data)
+                user.update_plan(form.plan.data)
                 return redirect(url_for('system') + "#my-account")
 
-            if form.name_on_card.data != name_on_card:
+            if form.name_on_card.data != credit.name_on_card:
                 try:  # check name_on_card input (security)
                     Secure.check_name_on_card(form.name_on_card.data)
-                    update_name_on_card(user_id, form.name_on_card.data)
+                    credit.update_name_on_card(form.name_on_card.data)
                     return redirect(url_for('system') + "#my-account")
                 except Exception as e:
                     form.name_on_card.errors += str(e)
 
-            if form.c_number.data != c_number:
+            if form.c_number.data != credit.c_number:
                 try:  # check c_number input (security)
                     Secure.check_c_number(form.c_number.data)
-                    update_c_number(user_id, form.c_number.data)
+                    credit.update_c_number(form.c_number.data)
                     return redirect(url_for('system') + "#my-account")
                 except Exception as e:
                     form.c_number.errors += str(e)
 
-            if int(form.cvv.data) != cvv:
+            if int(form.cvv.data) != credit.cvv:
                 try:  # check cvv input (security)
                     Secure.check_cvv(form.cvv.data)
-                    update_cvv(user_id, form.cvv.data)
+                    credit.update_cvv(form.cvv.data)
                     return redirect(url_for('system') + "#my-account")
                 except Exception as e:
                     form.cvv.errors += str(e)
 
-            if form.c_month.data != c_month:
+            if form.c_month.data != credit.c_month:
                 # there is no input in this case, because we use select button -> no security problem.
-                update_c_month(user_id, form.c_month.data)
+                credit.update_c_month(form.c_month.data)
                 return redirect(url_for('system') + "#my-account")
 
-            if int(form.c_year.data) != c_year:
+            if int(form.c_year.data) != credit.c_year:
                 # there is no input in this case, because we use select button -> no security problem.
-                update_c_year(user_id, form.c_year.data)
+                credit.update_c_year(form.c_year.data)
                 return redirect(url_for('system') + "#my-account")
 
-        return render_template('system.html', isLoggedIn=user_id != 0, battery=get_battery_capacity(user_id),
-                               username=username, email=email, password=password, phone=phone,
-                               first_name=first_name,
-                               last_name=last_name, address=address, plan=plan, name_on_card=name_on_card,
-                               c_number=c_number, cvv=cvv, c_month=c_month, c_year=c_year,
+        return render_template('system.html', user=user, isLoggedIn=user_id != 0, battery=battery, credit=credit,
                                daily_consumption=get_daily_consumption(user_id),
                                monthly_consumption=get_monthly_consumption(user_id),
                                yearly_consumption=get_yearly_consumption(user_id),
@@ -283,6 +273,20 @@ def logout():
     user_id = 0
 
     return redirect(url_for('home'))
+
+
+def generate_battery(uid):
+    status = True
+
+    batteries_count = get_number_of_batteries()
+
+    if add_battery(batteries_count + 1, uid, 100, 20):
+        batteries_count += 1
+
+    else:
+        status = False
+
+    return status
 
 
 if __name__ == '__main__':
