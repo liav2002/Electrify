@@ -128,6 +128,11 @@ def system():
                 credit.update_c_year(form.c_year.data)
                 return redirect(url_for('system') + "#my-account")
 
+        # TODO: update battery capacity and consumption real time.
+        # TODO: update daily consumption real time.
+        # TODO: fix bug: when we startup system window, the page show both of monthly and yearly consumption.
+        #                (it should show only monthly consumption).
+
         return render_template('system.html', user=user, isLoggedIn=user_id != 0, battery=battery, credit=credit,
                                daily_consumption=get_daily_consumption(user_id),
                                monthly_consumption=get_monthly_consumption(user_id),
