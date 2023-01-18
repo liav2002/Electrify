@@ -525,7 +525,7 @@ def get_c_year(user_id):
         return -1
 
 
-def get_daily_consumption(user_id):
+def get_daily_consumption(user_id, date):
     try:
         sqlHandler = create_connection()
         consumption = {"Hour": "Power"}
@@ -533,7 +533,7 @@ def get_daily_consumption(user_id):
                          '12:%', '13:%', '14:%', '15:%', '16:%', '17:%', '18:%', '19:%', '20:%', '21:%', '22:%', '23:%']
 
         for f in hours_filters:
-            query = f"SELECT SUM(Power) FROM Samples WHERE UserID={user_id} AND time(Time) LIKE '{f}';"
+            query = f"SELECT SUM(Power) FROM Samples WHERE UserID={user_id} AND Time LIKE '{date + ' ' + f}';"
             cursor = sqlHandler.execute(query)
             rows = cursor.fetchall()
             if rows[0][0] is None:
@@ -591,9 +591,15 @@ def get_yearly_consumption(user_id):
             cursor = sqlHandler.execute(query)
             rows = cursor.fetchall()
             if rows[0][0] is None:
-                consumption[calendar.month_name[int(f[3])]] = 0
+                if f[2] != '0':
+                    consumption[calendar.month_name[int(f[2:4])]] = 0
+                else:
+                    consumption[calendar.month_name[int(f[3])]] = 0
             else:
-                consumption[calendar.month_name[int(f[3])]] = rows[0][0]
+                if f[2] != '0':
+                    consumption[calendar.month_name[int(f[2:4])]] = rows[0][0]
+                else:
+                    consumption[calendar.month_name[int(f[3])]] = rows[0][0]
 
         return consumption
 

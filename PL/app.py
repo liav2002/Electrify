@@ -1,3 +1,5 @@
+import datetime
+
 from flask import Flask, render_template, url_for, flash, redirect
 from forms import RegistrationForm, LoginForm, AccountForm
 
@@ -134,7 +136,7 @@ def system():
         #                (it should show only monthly consumption).
 
         return render_template('system.html', user=user, isLoggedIn=user_id != 0, battery=battery, credit=credit,
-                               daily_consumption=get_daily_consumption(user_id),
+                               daily_consumption=get_daily_consumption(user_id, datetime.datetime.now().strftime("%Y-%m-%d")),
                                monthly_consumption=get_monthly_consumption(user_id),
                                yearly_consumption=get_yearly_consumption(user_id),
                                form=form, title="System")
