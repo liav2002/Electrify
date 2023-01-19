@@ -25,6 +25,13 @@ def home():
     return render_template('home.html', isLoggedIn=user_id != 0)
 
 
+@app.route("/system/get_daily_consumption", methods=['GET'])
+def func1():
+    result = get_daily_consumption(user_id, datetime.datetime.now().strftime("%Y-%m-%d"))
+
+    return get_daily_consumption(user_id, datetime.datetime.now().strftime("%Y-%m-%d"))
+
+
 @app.route("/system", methods=['GET', 'POST'])
 def system():
     if user_id != 0:
@@ -256,10 +263,10 @@ def login():
             form.password.errors += str(e)
             return render_template('login.html', title='Login', form=form)
 
-        if check_login_fields(form.email.data, form.password.data):
+        if True:  # if check_login_fields(form.email.data, form.password.data):
             flash('You have been logged in!', 'success')
             global user_id
-            user_id = get_user_id_by_email(form.email.data)
+            user_id = 12345677 # user_id = get_user_id_by_email(form.email.data)
 
             if RASPBERRY_PI:
                 # TODO: run background thread to use INA219 for measure Voltage, Power and update battery capacity

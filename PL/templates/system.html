@@ -1,29 +1,33 @@
 {% extends "layout.html" %}
 {% block content %}
 
-<!-- Header with full-height image -->
-<header class="bgimg-1 w3-display-container w3-grayscale-min" id="">
-  <div class="w3-display-left w3-text-white" style="padding:48px">
-    <span class="w3-jumbo w3-hide-small">Power for Everyone</span><br>
-    <span class="w3-xlarge">Electrify Solar Home Systems.</span>
-    <p><a href="#battery" class="w3-button w3-white w3-padding-large w3-large w3-margin-top w3-opacity w3-hover-opacity-off">View your battery</a></p>
-  </div>
-  <div class="w3-display-bottomleft w3-text-grey w3-large" style="padding:24px 48px">
-    <i class="fa fa-facebook-official w3-hover-opacity"></i>
-    <i class="fa fa-instagram w3-hover-opacity"></i>
-    <i class="fa fa-snapchat w3-hover-opacity"></i>
-    <i class="fa fa-pinterest-p w3-hover-opacity"></i>
-    <i class="fa fa-twitter w3-hover-opacity"></i>
-    <i class="fa fa-linkedin w3-hover-opacity"></i>
-  </div>
-</header>
+    <!-- Header with full-height image -->
+    <header class="bgimg-1 w3-display-container w3-grayscale-min" id="">
+        <div class="w3-display-left w3-text-white" style="padding:48px">
+            <span class="w3-jumbo w3-hide-small">Power for Everyone</span><br>
+            <span class="w3-xlarge">Electrify Solar Home Systems.</span>
+            <p><a href="#battery"
+                  class="w3-button w3-white w3-padding-large w3-large w3-margin-top w3-opacity w3-hover-opacity-off">View
+                your battery</a></p>
+        </div>
+        <div class="w3-display-bottomleft w3-text-grey w3-large" style="padding:24px 48px">
+            <i class="fa fa-facebook-official w3-hover-opacity"></i>
+            <i class="fa fa-instagram w3-hover-opacity"></i>
+            <i class="fa fa-snapchat w3-hover-opacity"></i>
+            <i class="fa fa-pinterest-p w3-hover-opacity"></i>
+            <i class="fa fa-twitter w3-hover-opacity"></i>
+            <i class="fa fa-linkedin w3-hover-opacity"></i>
+        </div>
+    </header>
 
-<head>
-    <!--Battery-->
-    <style>.p { font-family: "Copperplate", Copperplate, Fantasy;} </style>
-</head>
+    <head>
+        <!--Battery-->
+        <style>.p {
+            font-family: "Copperplate", Copperplate, Fantasy;
+        } </style>
+    </head>
 
-<body>
+    <body>
     <!--!Battery Status Section -->
     <div class="w3-container w3-light-grey" style="padding:85px 8px 120px" id="battery">
         <h1>
@@ -35,7 +39,34 @@
                 day = date.getDate();
                 document.getElementById("current_date").innerHTML = month + "/" + day + "/" + year;
             </script>
-       </h1></p>
+
+
+            <button onclick="JavaScript:alert('I intend to live forever. So far, so good. Steven Wright.')">View Quote
+                of the Day
+            </button>
+            <button type="button" onclick="changeBatteryLabel()">Update Content</button>
+
+            <script>
+                function changeBatteryLabel() {
+                    alert("test it");
+                    console.log("inside method changeBatteryLabel");
+                    var batteryLabel = document.getElementById("Battery_Label");
+                    batteryLabel.innerHTML = "Battery Level: 100%";
+
+                    var xhttp = new XMLHttpRequest();
+                    xhttp.onreadystatechange = function () {
+                        if (this.readyState == 4 && this.status == 200) {
+                            {#document.getElementById("demo").innerHTML = this.responseText;#}
+                            console.log("inside ajax metohd " + this.responseText);
+                        }
+                    };
+                    xhttp.open("GET", "/system/get_daily_consumption", true);
+                    xhttp.send();
+
+                }
+            </script>
+        </h1>
+        </p>
 
         <div class="row">
             <<!--!Battery -->
@@ -43,25 +74,25 @@
                 <h2><p class="p">Battery</p></h2>
                 <div class="battery">
                     {% if battery.capacity >= 50 %}
-                        <div class="battery-level-high" style="width: {{battery.capacity}}%">
-                            <div class="w3-center w3-xlarge" style="width: 500px ">{{battery.capacity}}%</div>
+                        <div class="battery-level-high" style="width: {{ battery.capacity }}%">
+                            <div class="w3-center w3-xlarge" style="width: 500px ">{{ battery.capacity }}%</div>
                         </div>
                     {% elif battery.capacity > 25 %}
-                        <div class="battery-level-medium" style="width: {{battery.capacity}}%">
-                            <div class="w3-center" style="width: 500px">{{battery.capacity}}%</div>
+                        <div class="battery-level-medium" style="width: {{ battery.capacity }}%">
+                            <div class="w3-center" style="width: 500px">{{ battery.capacity }}%</div>
                         </div>
                     {% else %}
-                         <div class="battery-level-low" style="width: {{battery.capacity}}%">
-                            <div class="w3-center" style="width: 500px">{{battery.capacity}}%</div>
+                        <div class="battery-level-low" style="width: {{ battery.capacity }}%">
+                            <div class="w3-center" style="width: 500px">{{ battery.capacity }}%</div>
                         </div>
                     {% endif %}
                 </div>
             </div>
             <!--Life expectancy of the battery -->
             <div class="column">
-                <h2><p class="p">Battery's life</p></h2>
+                <h2><p class="p" id="Battery_Label">Battery's life</p></h2>
                 <div class="battery">
-                    <div class="battery-consumption" style="width: {{battery.consumption * 5}}%">
+                    <div class="battery-consumption" style="width: {{ battery.consumption * 5 }}%">
                         <div class="w3-center w3-xlarge" style="width: 500px ">{{ battery.consumption }}KWh</div>
                     </div>
                 </div>
@@ -70,33 +101,52 @@
 
         <!--graphs-->
         <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
         <script type="text/javascript">
-          google.charts.load('current', {'packages':['corechart']});
-          google.charts.setOnLoadCallback(drawChart);
+            google.charts.load('current', {'packages': ['corechart']});
+            google.charts.setOnLoadCallback(drawChart);
 
-          function drawChart() {
-            var data = google.visualization.arrayToDataTable([
-                {% for k, v in daily_consumption.items() %}
-                    {% if v is string %}
-                        ['{{ k }}', '{{ v }}'],
-                    {% else %}
-                        ['{{ k }}', {{ v }}],
-                    {% endif %}
-                {% endfor %}
-            ]);
+            function sleep(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
 
-            var options = {
-              title: 'consumption',
-              curveType: 'function',
-              hAxis: {title: 'Time (hours)'},
-              vAxis: {title: 'consumpsion (KW/H)'},
-              backgroundColor: { fill: "#f1f1f1" }
-            };
+            function drawChart() {
+                console.log("inside ajax method drawChart");
+                var json = $.ajax({
+                    url: "/system/get_daily_consumption",
+                    dataType: "json",
+                    success: function (jsonData) {
+                        console.log(jsonData);
+                        var array = [];
+                        array.push(["Hour", "Power"])
 
-            var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+                        for (var i in jsonData)
+                            array.push([i, jsonData[i]]);
+                        console.log(array);
 
-            chart.draw(data, options);
-          }
+                        var data = new google.visualization.arrayToDataTable(array);
+
+                        var options = {
+                            title: 'consumption',
+                            curveType: 'function',
+                            hAxis: {title: 'Time (hours)'},
+                            vAxis: {title: 'consumpsion (KW/H)'},
+                            backgroundColor: {fill: "#f1f1f1"}
+                        };
+
+                        var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+
+                        chart.draw(data, options);
+                    },
+
+                    complete: function () {
+                        // Schedule the next request when the current one's complete
+                        {#sleep(5000);#}
+                        {#setInterval(drawChart, 1000); // The interval set to 5 seconds#}
+                    }
+                });
+
+            }
         </script>
 
         <!--daily use graph-->
@@ -104,7 +154,7 @@
     </div>
 
     <!-- Consumption Section -->
-    <div class="w3-container" style="padding:85px 8px 120px" id= consumption>
+    <div class="w3-container" style="padding:85px 8px 120px" id=consumption>
         <!-- yearly graph-->
         <script>
             google.charts.load('current', {packages: ['corechart', 'bar']});
@@ -160,7 +210,7 @@
                 ]);
 
                 date = new Date();
-                month = date.toLocaleString('default', { month: 'long' });
+                month = date.toLocaleString('default', {month: 'long'});
 
                 var options = {
                     colors: ['#006600'],
@@ -201,243 +251,243 @@
     </div>
 
     <!--My account-->
-    <div class="w3-container w3-light-grey" style="padding:85px 8px 120px" id= my-account >
+    <div class="w3-container w3-light-grey" style="padding:85px 8px 120px" id=my-account>
         <form method="POST" action="">
-        {{ form.hidden_tag() }}
-        <!-- Account's Details -->
-        <fieldset class="form-group">
-            <legend class="border-bottom mb-4">Account Details</legend>
-            <!-- Username's Form -->
-            <div class="form-group">
-                {{ form.username.label(class="form-control-label") }}
+            {{ form.hidden_tag() }}
+            <!-- Account's Details -->
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Account Details</legend>
+                <!-- Username's Form -->
+                <div class="form-group">
+                    {{ form.username.label(class="form-control-label") }}
 
-                {% if form.username.errors %}
-                {{ form.username(value=user.username, class="form-control form-control-lg is-invalid") }}
-                <div class="invalid-feedback">
-                    {% for error in form.username.errors %}
-                    <span>{{ error }}</span>
-                    {% endfor %}
+                    {% if form.username.errors %}
+                        {{ form.username(value=user.username, class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.username.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.username(value=user.username, class="form-control form-control-lg") }}
+                    {% endif %}
                 </div>
-                {% else %}
-                {{ form.username(value=user.username, class="form-control form-control-lg") }}
-                {% endif %}
-            </div>
-            <!-- Email's Form -->
-            <div class="form-group">
-                {{ form.email.label(class="form-control-label") }}
-                {% if form.email.errors %}
-                {{ form.email(value=user.email, class="form-control form-control-lg is-invalid") }}
-                <div class="invalid-feedback">
-                    {% for error in form.email.errors %}
-                    <span>{{ error }}</span>
-                    {% endfor %}
+                <!-- Email's Form -->
+                <div class="form-group">
+                    {{ form.email.label(class="form-control-label") }}
+                    {% if form.email.errors %}
+                        {{ form.email(value=user.email, class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.email.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.email(value=user.email, class="form-control form-control-lg") }}
+                    {% endif %}
                 </div>
-                {% else %}
-                {{ form.email(value=user.email, class="form-control form-control-lg") }}
-                {% endif %}
-            </div>
-            <!-- Password's Form -->
-            <div class="form-group">
-                {{ form.password.label(class="form-control-label") }}
-                {% if form.password.errors %}
-                {{ form.password(value=user.password, class="form-control form-control-lg is-invalid") }}
-                <div class="invalid-feedback">
-                    {% for error in form.password.errors %}
-                    <span>{{ error }}</span>
-                    {% endfor %}
+                <!-- Password's Form -->
+                <div class="form-group">
+                    {{ form.password.label(class="form-control-label") }}
+                    {% if form.password.errors %}
+                        {{ form.password(value=user.password, class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.password.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.password(value=user.password, class="form-control form-control-lg") }}
+                    {% endif %}
                 </div>
-                {% else %}
-                {{ form.password(value=user.password, class="form-control form-control-lg") }}
-                {% endif %}
-            </div>
-            <!-- ConfirmPassword's Form -->
-            <div class="form-group">
-                {{ form.confirm_password.label(class="form-control-label") }}
-                {% if form.confirm_password.errors %}
-                {{ form.confirm_password(value=user.password, class="form-control form-control-lg is-invalid") }}
-                <div class="invalid-feedback">
-                    {% for error in form.confirm_password.errors %}
-                    <span>{{ error }}</span>
-                    {% endfor %}
+                <!-- ConfirmPassword's Form -->
+                <div class="form-group">
+                    {{ form.confirm_password.label(class="form-control-label") }}
+                    {% if form.confirm_password.errors %}
+                        {{ form.confirm_password(value=user.password, class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.confirm_password.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.confirm_password(value=user.password, class="form-control form-control-lg") }}
+                    {% endif %}
                 </div>
-                {% else %}
-                {{ form.confirm_password(value=user.password, class="form-control form-control-lg") }}
-                {% endif %}
-            </div>
-        </fieldset>
+            </fieldset>
 
-        <br>
+            <br>
 
-        <!-- Private Details -->
-        <fieldset class="form-group">
-            <legend class="border-bottom mb-4">Private Details</legend>
-            <!-- FirstName's Form -->
-            <div class="form-group">
-                {{ form.first_name.label(class="form-control-label") }}
+            <!-- Private Details -->
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Private Details</legend>
+                <!-- FirstName's Form -->
+                <div class="form-group">
+                    {{ form.first_name.label(class="form-control-label") }}
 
-                {% if form.first_name.errors %}
-                {{ form.first_name(value=user.first_name, class="form-control form-control-lg is-invalid") }}
-                <div class="invalid-feedback">
-                    {% for error in form.first_name.errors %}
-                    <span>{{ error }}</span>
-                    {% endfor %}
+                    {% if form.first_name.errors %}
+                        {{ form.first_name(value=user.first_name, class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.first_name.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.first_name(value=user.first_name, class="form-control form-control-lg") }}
+                    {% endif %}
                 </div>
-                {% else %}
-                {{ form.first_name(value=user.first_name, class="form-control form-control-lg") }}
-                {% endif %}
-            </div>
-            <!-- LastName's Form -->
-            <div class="form-group">
-                {{ form.last_name.label(class="form-control-label") }}
+                <!-- LastName's Form -->
+                <div class="form-group">
+                    {{ form.last_name.label(class="form-control-label") }}
 
-                {% if form.last_name.errors %}
-                {{ form.last_name(value=user.last_name, class="form-control form-control-lg is-invalid") }}
-                <div class="invalid-feedback">
-                    {% for error in form.last_name.errors %}
-                    <span>{{ error }}</span>
-                    {% endfor %}
+                    {% if form.last_name.errors %}
+                        {{ form.last_name(value=user.last_name, class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.last_name.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.last_name(value=user.last_name, class="form-control form-control-lg") }}
+                    {% endif %}
                 </div>
-                {% else %}
-                {{ form.last_name(value=user.last_name, class="form-control form-control-lg") }}
-                {% endif %}
-            </div>
-            <!-- Address' Form -->
-            <div class="form-group">
-                {{ form.address.label(class="form-control-label") }}
+                <!-- Address' Form -->
+                <div class="form-group">
+                    {{ form.address.label(class="form-control-label") }}
 
-                {% if form.address.errors %}
-                {{ form.address(value=user.address, class="form-control form-control-lg is-invalid") }}
-                <div class="invalid-feedback">
-                    {% for error in form.address.errors %}
-                    <span>{{ error }}</span>
-                    {% endfor %}
+                    {% if form.address.errors %}
+                        {{ form.address(value=user.address, class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.address.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.address(value=user.address, class="form-control form-control-lg") }}
+                    {% endif %}
                 </div>
-                {% else %}
-                {{ form.address(value=user.address, class="form-control form-control-lg") }}
-                {% endif %}
-            </div>
-            <!-- Phone's Form -->
-            <div class="form-group">
-                {{ form.phone.label(class="form-control-label") }}
+                <!-- Phone's Form -->
+                <div class="form-group">
+                    {{ form.phone.label(class="form-control-label") }}
 
-                {% if form.phone.errors %}
-                {{ form.phone(value=user.phone, class="form-control form-control-lg is-invalid") }}
-                <div class="invalid-feedback">
-                    {% for error in form.phone.errors %}
-                    <span>{{ error }}</span>
-                    {% endfor %}
+                    {% if form.phone.errors %}
+                        {{ form.phone(value=user.phone, class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.phone.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.phone(value=user.phone, class="form-control form-control-lg") }}
+                    {% endif %}
                 </div>
-                {% else %}
-                {{ form.phone(value=user.phone, class="form-control form-control-lg") }}
-                {% endif %}
-            </div>
-        </fieldset>
+            </fieldset>
 
-        <br>
+            <br>
 
-        <!-- Payment's Details -->
-        <fieldset class="form-group">
-            <legend class="border-bottom mb-4">Payment Method</legend>
-            <label class="form-control-label"><b>Accepted Cards</b></label>
-            <div class="icon-container">
-                <i class="fa fa-cc-visa" style="color:navy;"></i>
-                <i class="fa fa-cc-amex" style="color:blue;"></i>
-                <i class="fa fa-cc-mastercard" style="color:red;"></i>
-                <i class="fa fa-cc-discover" style="color:orange;"></i>
-            </div>
-            <!-- Plan's Form -->
-            <div class="form-group">
-                {{ form.plan.label(class="form-control-label") }}
-                {% if form.plan.errors %}
-                {{ form.plan(value=user.plan, class="form-control form-control-lg is-invalid") }}
-                <div class="invalid-feedback">
-                    {% for error in form.plan.errors %}
-                    <span>{{ error }}</span>
-                    {% endfor %}
+            <!-- Payment's Details -->
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Payment Method</legend>
+                <label class="form-control-label"><b>Accepted Cards</b></label>
+                <div class="icon-container">
+                    <i class="fa fa-cc-visa" style="color:navy;"></i>
+                    <i class="fa fa-cc-amex" style="color:blue;"></i>
+                    <i class="fa fa-cc-mastercard" style="color:red;"></i>
+                    <i class="fa fa-cc-discover" style="color:orange;"></i>
                 </div>
-                {% else %}
-                {{ form.plan(value=user.plan, class="form-control form-control-lg") }}
-                {% endif %}
-            </div>
-            <!-- NameOnCard's Form -->
-            <div class="form-group">
-                {{ form.name_on_card.label(class="form-control-label") }}
-                {% if form.name_on_card.errors %}
-                {{ form.name_on_card(value=credit.name_on_card, class="form-control form-control-lg is-invalid") }}
-                <div class="invalid-feedback">
-                    {% for error in form.name_on_card.errors %}
-                    <span>{{ error }}</span>
-                    {% endfor %}
+                <!-- Plan's Form -->
+                <div class="form-group">
+                    {{ form.plan.label(class="form-control-label") }}
+                    {% if form.plan.errors %}
+                        {{ form.plan(value=user.plan, class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.plan.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.plan(value=user.plan, class="form-control form-control-lg") }}
+                    {% endif %}
                 </div>
-                {% else %}
-                {{ form.name_on_card(value=credit.name_on_card, class="form-control form-control-lg") }}
-                {% endif %}
-            </div>
-            <!-- C_Number's Form -->
-            <div class="form-group">
-                {{ form.c_number.label(class="form-control-label") }}
-                {% if form.c_number.errors %}
-                {{ form.c_number(value=credit.c_number, class="form-control form-control-lg is-invalid") }}
-                <div class="invalid-feedback">
-                    {% for error in form.c_number.errors %}
-                    <span>{{ error }}</span>
-                    {% endfor %}
+                <!-- NameOnCard's Form -->
+                <div class="form-group">
+                    {{ form.name_on_card.label(class="form-control-label") }}
+                    {% if form.name_on_card.errors %}
+                        {{ form.name_on_card(value=credit.name_on_card, class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.name_on_card.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.name_on_card(value=credit.name_on_card, class="form-control form-control-lg") }}
+                    {% endif %}
                 </div>
-                {% else %}
-                {{ form.c_number(value=credit.c_number, class="form-control form-control-lg") }}
-                {% endif %}
-            </div>
-            <!-- C_Month's Form -->
-            <div class="form-group">
-                {{ form.c_month.label(class="form-control-label") }}
-                {% if form.c_month.errors %}
-                {{ form.c_month(value=credit.c_month, class="form-control form-control-lg is-invalid") }}
-                <div class="invalid-feedback">
-                    {% for error in form.c_month.errors %}
-                    <span>{{ error }}</span>
-                    {% endfor %}
+                <!-- C_Number's Form -->
+                <div class="form-group">
+                    {{ form.c_number.label(class="form-control-label") }}
+                    {% if form.c_number.errors %}
+                        {{ form.c_number(value=credit.c_number, class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.c_number.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.c_number(value=credit.c_number, class="form-control form-control-lg") }}
+                    {% endif %}
                 </div>
-                {% else %}
-                {{ form.c_month(value=credit.c_month, class="form-control form-control-lg") }}
-                {% endif %}
-            </div>
-            <!-- C_Year's Form -->
-            <div class="form-group">
-                {{ form.c_year.label(class="form-control-label") }}
-                {% if form.c_year.errors %}
-                {{ form.c_year(value=credit.c_year, class="form-control form-control-lg is-invalid") }}
-                <div class="invalid-feedback">
-                    {% for error in form.c_year.errors %}
-                    <span>{{ error }}</span>
-                    {% endfor %}
+                <!-- C_Month's Form -->
+                <div class="form-group">
+                    {{ form.c_month.label(class="form-control-label") }}
+                    {% if form.c_month.errors %}
+                        {{ form.c_month(value=credit.c_month, class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.c_month.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.c_month(value=credit.c_month, class="form-control form-control-lg") }}
+                    {% endif %}
                 </div>
-                {% else %}
-                {{ form.c_year(value=credit.c_year, class="form-control form-control-lg") }}
-                {% endif %}
-            </div>
-            <!-- CVV's Form -->
-            <div class="form-group">
-                {{ form.cvv.label(class="form-control-label") }}
-                {% if form.cvv.errors %}
-                {{ form.cvv(value=credit.cvv, class="form-control form-control-lg is-invalid") }}
-                <div class="invalid-feedback">
-                    {% for error in form.cvv.errors %}
-                    <span>{{ error }}</span>
-                    {% endfor %}
+                <!-- C_Year's Form -->
+                <div class="form-group">
+                    {{ form.c_year.label(class="form-control-label") }}
+                    {% if form.c_year.errors %}
+                        {{ form.c_year(value=credit.c_year, class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.c_year.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.c_year(value=credit.c_year, class="form-control form-control-lg") }}
+                    {% endif %}
                 </div>
-                {% else %}
-                {{ form.cvv(value=credit.cvv, class="form-control form-control-lg") }}
-                {% endif %}
-            </div>
-        </fieldset>
+                <!-- CVV's Form -->
+                <div class="form-group">
+                    {{ form.cvv.label(class="form-control-label") }}
+                    {% if form.cvv.errors %}
+                        {{ form.cvv(value=credit.cvv, class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.cvv.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.cvv(value=credit.cvv, class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+            </fieldset>
 
-        <!-- Submit Button -->
-        <div class="form-group" style="padding: 16px 0px">
-            {{ form.submit(class="btn btn-outline-info") }}
-        </div>
-    </form>
+            <!-- Submit Button -->
+            <div class="form-group" style="padding: 16px 0px">
+                {{ form.submit(class="btn btn-outline-info") }}
+            </div>
+        </form>
 
 
     </div>
-</body>
+    </body>
 {% endblock content %}
