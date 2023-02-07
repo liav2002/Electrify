@@ -26,10 +26,18 @@ def home():
 
 
 @app.route("/system/get_daily_consumption", methods=['GET'])
-def func1():
-    result = get_daily_consumption(user_id, datetime.datetime.now().strftime("%Y-%m-%d"))
-
+def daily_consumption():
     return get_daily_consumption(user_id, datetime.datetime.now().strftime("%Y-%m-%d"))
+
+
+@app.route("/system/get_monthly_consumption", methods=['GET'])
+def monthly_consumption():
+    return get_monthly_consumption(user_id)
+
+
+@app.route("/system/get_yearly_consumption", methods=['GET'])
+def yearly_consumption():
+    return get_yearly_consumption(user_id)
 
 
 @app.route("/system", methods=['GET', 'POST'])
@@ -143,9 +151,6 @@ def system():
         #                (it should show only monthly consumption).
 
         return render_template('system.html', user=user, isLoggedIn=user_id != 0, battery=battery, credit=credit,
-                               daily_consumption=get_daily_consumption(user_id, datetime.datetime.now().strftime("%Y-%m-%d")),
-                               monthly_consumption=get_monthly_consumption(user_id),
-                               yearly_consumption=get_yearly_consumption(user_id),
                                form=form, title="System")
 
     else:
@@ -266,7 +271,7 @@ def login():
         if True:  # if check_login_fields(form.email.data, form.password.data):
             flash('You have been logged in!', 'success')
             global user_id
-            user_id = 12345677 # user_id = get_user_id_by_email(form.email.data)
+            user_id = 12345677  # user_id = get_user_id_by_email(form.email.data)
 
             if RASPBERRY_PI:
                 # TODO: run background thread to use INA219 for measure Voltage, Power and update battery capacity

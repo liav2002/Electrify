@@ -528,7 +528,7 @@ def get_c_year(user_id):
 def get_daily_consumption(user_id, date):
     try:
         sqlHandler = create_connection()
-        consumption = {}#{"Hour": "Power"}
+        consumption = {}  # {"Hour": "Power"}
         hours_filters = ['00:%', '01:%', '02:%', '03:%', '04:%', '05:%', '06:%', '07:%', '08:%', '09:%', '10:%', '11:%',
                          '12:%', '13:%', '14:%', '15:%', '16:%', '17:%', '18:%', '19:%', '20:%', '21:%', '22:%', '23:%']
 
@@ -551,7 +551,7 @@ def get_daily_consumption(user_id, date):
 def get_monthly_consumption(user_id):
     try:
         sqlHandler = create_connection()
-        consumption = {"Hour": "Power"}
+        consumption = {}  # {"Day": "Power"}
 
         currentMonth = datetime.today().month
         if currentMonth < 10:
@@ -582,7 +582,7 @@ def get_monthly_consumption(user_id):
 def get_yearly_consumption(user_id):
     try:
         sqlHandler = create_connection()
-        consumption = {"Day": "Power"}
+        consumption = {}  # {"Month": "Power"}
         filters = ['%-01-%', '%-02-%', '%-03-%', '%-04-%', '%-05-%', '%-06-%',
                    '%-07-%', '%-08-%', '%-09-%', '%-10-%', '%-11-%', '%-12-%']
 
