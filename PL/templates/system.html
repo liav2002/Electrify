@@ -39,26 +39,6 @@
                 day = date.getDate();
                 document.getElementById("current_date").innerHTML = month + "/" + day + "/" + year;
             </script>
-
-            <script>
-                function changeBatteryLabel() {
-                    alert("test it");
-                    console.log("inside method changeBatteryLabel");
-                    var batteryLabel = document.getElementById("Battery_Label");
-                    batteryLabel.innerHTML = "Battery Level: 100%";
-
-                    var xhttp = new XMLHttpRequest();
-                    xhttp.onreadystatechange = function () {
-                        if (this.readyState == 4 && this.status == 200) {
-                            {#document.getElementById("demo").innerHTML = this.responseText;#}
-                            console.log("inside ajax metohd " + this.responseText);
-                        }
-                    };
-                    xhttp.open("GET", "/system/get_daily_consumption", true);
-                    xhttp.send();
-
-                }
-            </script>
         </h1>
         </p>
 
@@ -105,18 +85,15 @@
             }
 
             function drawChart() {
-                console.log("inside ajax method drawChart -> daily_consumption");
                 var json = $.ajax({
                     url: "/system/get_daily_consumption",
                     dataType: "json",
                     success: function (jsonData) {
-                        console.log(jsonData);
                         var array = [];
                         array.push(["Hour", "Power"])
 
                         for (var i in jsonData)
                             array.push([i, jsonData[i]]);
-                        console.log(array);
 
                         var data = new google.visualization.arrayToDataTable(array);
 
@@ -131,16 +108,11 @@
                         var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
 
                         chart.draw(data, options);
-                    },
-
-                    complete: function () {
-                        // Schedule the next request when the current one's complete
-                        {#sleep(5000);#}
-                        {#setInterval(drawChart, 1000); // The interval set to 5 seconds#}
                     }
                 });
-
             }
+
+            setInterval(drawChart, 5000); // The interval set to 5 seconds
         </script>
 
         <!--daily use graph-->
@@ -156,18 +128,15 @@
             google.charts.setOnLoadCallback(drawBasic);
 
             function drawBasic() {
-                console.log("inside ajax method drawChart -> yearly_consumption");
                 var json = $.ajax({
                     url: "/system/get_yearly_consumption",
                     dataType: "json",
                     success: function (jsonData) {
-                        console.log(jsonData);
                         var array = [];
                         array.push(["Month", "Power"])
 
                         for (var i in jsonData)
                             array.push([i, jsonData[i]]);
-                        console.log(array);
 
                         var data = new google.visualization.arrayToDataTable(array);
 
@@ -189,37 +158,30 @@
                             document.getElementById('yearly'));
 
                         chart.draw(data, options);
-                    },
-
-                    complete: function () {
-                        // Schedule the next request when the current one's complete
-                        {#sleep(5000);#}
-                        {#setInterval(drawChart, 1000); // The interval set to 5 seconds#}
                     }
                 });
-
             }
+
+            setInterval(drawBasic, 5000); // The interval set to 5 seconds
         </script>
         <div id="yearly" class="consumptionGraph"></div>
 
         <!--monthly graph-->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
         <script>
             google.charts.load('current', {packages: ['corechart', 'bar']});
             google.charts.setOnLoadCallback(drawBasic);
 
             function drawBasic() {
-                console.log("inside ajax method drawChart -> monthly_consumption");
                 var json = $.ajax({
                     url: "/system/get_monthly_consumption",
                     dataType: "json",
                     success: function (jsonData) {
-                        console.log(jsonData);
                         var array = [];
                         array.push(["Day", "Power"])
 
                         for (var i in jsonData)
                             array.push([i, jsonData[i]]);
-                        console.log(array);
 
                         var data = new google.visualization.arrayToDataTable(array);
 
@@ -242,16 +204,11 @@
                             document.getElementById('monthly'));
 
                         chart.draw(data, options);
-                    },
-
-                    complete: function () {
-                        // Schedule the next request when the current one's complete
-                        {#sleep(5000);#}
-                        {#setInterval(drawChart, 1000); // The interval set to 5 seconds#}
                     }
                 });
-
             }
+
+            setInterval(drawBasic, 5000); // The interval set to 5 seconds
         </script>
         <div id="monthly" class="consumptionGraph"></div>
 
