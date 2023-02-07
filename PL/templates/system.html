@@ -40,12 +40,6 @@
                 document.getElementById("current_date").innerHTML = month + "/" + day + "/" + year;
             </script>
 
-
-            <button onclick="JavaScript:alert('I intend to live forever. So far, so good. Steven Wright.')">View Quote
-                of the Day
-            </button>
-            <button type="button" onclick="changeBatteryLabel()">Update Content</button>
-
             <script>
                 function changeBatteryLabel() {
                     alert("test it");
@@ -111,7 +105,7 @@
             }
 
             function drawChart() {
-                console.log("inside ajax method drawChart");
+                console.log("inside ajax method drawChart -> daily_consumption");
                 var json = $.ajax({
                     url: "/system/get_daily_consumption",
                     dataType: "json",
@@ -156,39 +150,54 @@
     <!-- Consumption Section -->
     <div class="w3-container" style="padding:85px 8px 120px" id=consumption>
         <!-- yearly graph-->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
         <script>
             google.charts.load('current', {packages: ['corechart', 'bar']});
             google.charts.setOnLoadCallback(drawBasic);
 
             function drawBasic() {
-                var data = google.visualization.arrayToDataTable([
-                    {% for k, v in yearly_consumption.items() %}
-                        {% if v is string %}
-                            ['{{ k }}', '{{ v }}'],
-                        {% else %}
-                            ['{{ k }}', {{ v }}],
-                        {% endif %}
-                    {% endfor %}
-                ]);
+                console.log("inside ajax method drawChart -> yearly_consumption");
+                var json = $.ajax({
+                    url: "/system/get_yearly_consumption",
+                    dataType: "json",
+                    success: function (jsonData) {
+                        console.log(jsonData);
+                        var array = [];
+                        array.push(["Month", "Power"])
 
-                date = new Date();
-                year = date.getFullYear();
+                        for (var i in jsonData)
+                            array.push([i, jsonData[i]]);
+                        console.log(array);
 
-                var options = {
-                    colors: ['#66CD00'],
-                    title: year,
-                    hAxis: {
-                        title: 'Months',
+                        var data = new google.visualization.arrayToDataTable(array);
+
+                        date = new Date();
+                        year = date.getFullYear();
+
+                        var options = {
+                            colors: ['#66CD00'],
+                            title: year,
+                            hAxis: {
+                                title: 'Months',
+                            },
+                            vAxis: {
+                                title: 'Consumption (KW/H)'
+                            }
+                        };
+
+                        var chart = new google.visualization.ColumnChart(
+                            document.getElementById('yearly'));
+
+                        chart.draw(data, options);
                     },
-                    vAxis: {
-                        title: 'Consumption (KW/H)'
+
+                    complete: function () {
+                        // Schedule the next request when the current one's complete
+                        {#sleep(5000);#}
+                        {#setInterval(drawChart, 1000); // The interval set to 5 seconds#}
                     }
-                };
+                });
 
-                var chart = new google.visualization.ColumnChart(
-                    document.getElementById('yearly'));
-
-                chart.draw(data, options);
             }
         </script>
         <div id="yearly" class="consumptionGraph"></div>
@@ -199,38 +208,54 @@
             google.charts.setOnLoadCallback(drawBasic);
 
             function drawBasic() {
-                var data = google.visualization.arrayToDataTable([
-                    {% for k, v in monthly_consumption.items() %}
-                        {% if v is string %}
-                            ['{{ k }}', '{{ v }}'],
-                        {% else %}
-                            ['{{ k }}', {{ v }}],
-                        {% endif %}
-                    {% endfor %}
-                ]);
+                console.log("inside ajax method drawChart -> monthly_consumption");
+                var json = $.ajax({
+                    url: "/system/get_monthly_consumption",
+                    dataType: "json",
+                    success: function (jsonData) {
+                        console.log(jsonData);
+                        var array = [];
+                        array.push(["Day", "Power"])
 
-                date = new Date();
-                month = date.toLocaleString('default', {month: 'long'});
+                        for (var i in jsonData)
+                            array.push([i, jsonData[i]]);
+                        console.log(array);
 
-                var options = {
-                    colors: ['#006600'],
-                    title: month,
-                    hAxis: {
-                        title: 'days',
+                        var data = new google.visualization.arrayToDataTable(array);
+
+                        date = new Date();
+                        month = date.toLocaleString('default', {month: 'long'});
+
+                        var options = {
+                            colors: ['#006600'],
+                            title: month,
+                            hAxis: {
+                                title: 'days',
+                            },
+                            vAxis: {
+                                title: 'Consumption (KW/H)'
+                            }
+                        };
+
+
+                        var chart = new google.visualization.ColumnChart(
+                            document.getElementById('monthly'));
+
+                        chart.draw(data, options);
                     },
-                    vAxis: {
-                        title: 'Consumption (KW/H)'
+
+                    complete: function () {
+                        // Schedule the next request when the current one's complete
+                        {#sleep(5000);#}
+                        {#setInterval(drawChart, 1000); // The interval set to 5 seconds#}
                     }
-                };
+                });
 
-                var chart = new google.visualization.ColumnChart(
-                    document.getElementById('monthly'));
-
-                chart.draw(data, options);
             }
         </script>
         <div id="monthly" class="consumptionGraph"></div>
 
+        <!--Switch between monthly to yearly graph-->
         <script>
             var yearlyGraph = document.getElementById('yearly')
             var monthlyGraph = document.getElementById('monthly')
@@ -245,7 +270,6 @@
                 monthlyGraph.style.display = "block";
             }
         </script>
-
         <element class="w3-button w3-black  w3-col m6 " onclick="showMonthlyGraph();">Monthly</element>
         <element class="w3-button w3-black  w3-col m6 " onclick="showYearlyGraph();">Yearly</element>
     </div>

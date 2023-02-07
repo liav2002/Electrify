@@ -13,9 +13,9 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
 
     {% if title %}
-    <title>Electrify - {{ title }}</title>
+        <title>Electrify - {{ title }}</title>
     {% else %}
-    <title>Electrify</title>
+        <title>Electrify</title>
     {% endif %}
 </head>
 
@@ -37,50 +37,54 @@
     <!-- logo -->
     <div class="w3-bar w3-white w3-card" id="myNavbar">
         {% if isLoggedIn %}
-        <a href="{{ url_for('system') + '#'}}" class="w3-bar-item">
-            <img alt="Quires" src="static/images/logo.png"
-                 width="120" height="60">
-        </a>
+            <a href="{{ url_for('system') + '#' }}" class="w3-bar-item">
+                <img alt="Quires" src="static/images/logo.png"
+                     width="120" height="60">
+            </a>
         {% else %}
-        <a href="{{url_for('home') + '#home'}}" class="w3-bar-item">
-            <img alt="Quires" src="static/images/logo.png"
-                 width="120" height="60">
-        </a>
+            <a href="{{ url_for('home') + '#home' }}" class="w3-bar-item">
+                <img alt="Quires" src="static/images/logo.png"
+                     width="120" height="60">
+            </a>
         {% endif %}
 
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-            <!--Avatar-->
-            {% if isLoggedIn %}
+        <!--Avatar-->
+        {% if isLoggedIn %}
             <style>
-            .avatar {
-             vertical-align: middle;
-            width: 60px;
-            height: 60px;
-             border-radius:50%;
-            }
+                .avatar {
+                    vertical-align: middle;
+                    width: 60px;
+                    height: 60px;
+                    border-radius: 50%;
+                }
             </style>
             <img src="static/images/avatar.png" alt="Avatar" class="avatar column w3">
 
-        <!-- Right-sided navbar links -->
-                <div class="w3-right w3-hide-small">
-                <a href="{{url_for('system') + '#battery'}}" class="w3-bar-item w3-button"><i class="fa fa-battery"></i> BATTERY</a>
-                <a href="{{url_for('system') + '#consumption'}}" class="w3-bar-item w3-button"><i class="fa fa-line-chart"></i> CONSUMPTION</a>
-                <a href="{{url_for('system') + '#insight'}}" class="w3-bar-item w3-button"><i class="fa fa-lightbulb-o"></i> INSIGHT</a>
-                <a href="{{url_for('system') + '#my-account'}}" class="w3-bar-item w3-button"><i class="fa fa-user"></i> MY-ACCOUNT</a>
-                <a href="{{url_for('logout')}}" class="w3-bar-item w3-button"><i class="fa fa-sign-out"></i> LOGOUT</a>
-            {% else %}
-                    <div class="w3-right w3-hide-small">
-                <a href="{{url_for('home') + '#about'}}" class="w3-bar-item w3-button">ABOUT</a>
-                <a href="{{url_for('home') + '#team'}}" class="w3-bar-item w3-button"><i class="fa fa-users"></i> TEAM</a>
-                <a href="{{url_for('home') + '#work'}}" class="w3-bar-item w3-button"><i class="fa fa-th"></i> WORK</a>
-                <a href="{{url_for('home') + '#pricing'}}" class="w3-bar-item w3-button"><i class="fa fa-usd"></i>
-                    PRICING</a>
-                <a href="{{url_for('home') + '#contact'}}" class="w3-bar-item w3-button"><i class="fa fa-envelope"></i>
-                    CONTACT</a>
-                <a href="{{ url_for('login')}}" class="w3-bar-item w3-button"><i class="fa fa-sign-in"></i> LOGIN </a>
-            {% endif %}
+            <!-- Right-sided navbar links -->
+            <div class="w3-right w3-hide-small">
+            <a href="{{ url_for('system') + '#battery' }}" class="w3-bar-item w3-button"><i class="fa fa-battery"></i>
+                BATTERY</a>
+            <a href="{{ url_for('system') + '#consumption' }}" class="w3-bar-item w3-button"><i
+                    class="fa fa-line-chart"></i> CONSUMPTION</a>
+            <a href="{{ url_for('system') + '#insight' }}" class="w3-bar-item w3-button"><i
+                    class="fa fa-lightbulb-o"></i> INSIGHT</a>
+            <a href="{{ url_for('system') + '#my-account' }}" class="w3-bar-item w3-button"><i class="fa fa-user"></i>
+                MY-ACCOUNT</a>
+            <a href="{{ url_for('logout') }}" class="w3-bar-item w3-button"><i class="fa fa-sign-out"></i> LOGOUT</a>
+        {% else %}
+            <div class="w3-right w3-hide-small">
+            <a href="{{ url_for('home') + '#about' }}" class="w3-bar-item w3-button">ABOUT</a>
+            <a href="{{ url_for('home') + '#team' }}" class="w3-bar-item w3-button"><i class="fa fa-users"></i> TEAM</a>
+            <a href="{{ url_for('home') + '#work' }}" class="w3-bar-item w3-button"><i class="fa fa-th"></i> WORK</a>
+            <a href="{{ url_for('home') + '#pricing' }}" class="w3-bar-item w3-button"><i class="fa fa-usd"></i>
+                PRICING</a>
+            <a href="{{ url_for('home') + '#contact' }}" class="w3-bar-item w3-button"><i class="fa fa-envelope"></i>
+                CONTACT</a>
+            <a href="{{ url_for('login') }}" class="w3-bar-item w3-button"><i class="fa fa-sign-in"></i> LOGIN </a>
+        {% endif %}
         </div>
 
         <!-- Hide right-floated links on small screens and replace them with a menu icon -->
@@ -88,57 +92,59 @@
            onclick="w3_open()">
             <i class="fa fa-bars"></i>
         </a>
+        </div>
     </div>
-</div>
 
-<!-- Sidebar on small screens when clicking the menu icon -->
-<nav class="w3-sidebar w3-bar-block w3-black w3-card w3-animate-left w3-hide-medium w3-hide-large" style="display:none"
-     id="mySidebar">
-    <a href="javascript:void(0)" onclick="w3_close()" class="w3-bar-item w3-button w3-large w3-padding-16">Close ×</a>
-    {% if isLoggedIn %}
-        <a href="{{url_for('system')}}" class="w3-bar-item w3-button">BATTERY</a>
-        <a href="{{url_for('system')}}" class="w3-bar-item w3-button">CONSUMPTION</a>
-        <a href="{{url_for('system')}}" class="w3-bar-item w3-button">INSIGHT</a>
-        <a href="{{url_for('system')}}" class="w3-bar-item w3-button">MY-ACCOUNT</a>
-        <a href="{{url_for('logout')}}" class="w3-bar-item w3-button">LOGOUT</a>
-    {% else %}
-        <a href="#about" onclick="w3_close()" class="w3-bar-item w3-button">ABOUT</a>
-        <a href="#team" onclick="w3_close()" class="w3-bar-item w3-button">TEAM</a>
-        <a href="#work" onclick="w3_close()" class="w3-bar-item w3-button">WORK</a>
-        <a href="#pricing" onclick="w3_close()" class="w3-bar-item w3-button">PRICING</a>
-        <a href="#contact" onclick="w3_close()" class="w3-bar-item w3-button">CONTACT</a>
-        <a href="{{ url_for('login')}}" class="w3-bar-item w3-button">LOGIN </a>
-    {% endif %}
-</nav>
+    <!-- Sidebar on small screens when clicking the menu icon -->
+    <nav class="w3-sidebar w3-bar-block w3-black w3-card w3-animate-left w3-hide-medium w3-hide-large"
+         style="display:none"
+         id="mySidebar">
+        <a href="javascript:void(0)" onclick="w3_close()" class="w3-bar-item w3-button w3-large w3-padding-16">Close
+            ×</a>
+        {% if isLoggedIn %}
+            <a href="{{ url_for('system') }}" class="w3-bar-item w3-button">BATTERY</a>
+            <a href="{{ url_for('system') }}" class="w3-bar-item w3-button">CONSUMPTION</a>
+            <a href="{{ url_for('system') }}" class="w3-bar-item w3-button">INSIGHT</a>
+            <a href="{{ url_for('system') }}" class="w3-bar-item w3-button">MY-ACCOUNT</a>
+            <a href="{{ url_for('logout') }}" class="w3-bar-item w3-button">LOGOUT</a>
+        {% else %}
+            <a href="#about" onclick="w3_close()" class="w3-bar-item w3-button">ABOUT</a>
+            <a href="#team" onclick="w3_close()" class="w3-bar-item w3-button">TEAM</a>
+            <a href="#work" onclick="w3_close()" class="w3-bar-item w3-button">WORK</a>
+            <a href="#pricing" onclick="w3_close()" class="w3-bar-item w3-button">PRICING</a>
+            <a href="#contact" onclick="w3_close()" class="w3-bar-item w3-button">CONTACT</a>
+            <a href="{{ url_for('login') }}" class="w3-bar-item w3-button">LOGIN </a>
+        {% endif %}
+    </nav>
 
-<!-- add content in other pages -->
-{% block content %} {% endblock content %}
+    <!-- add content in other pages -->
+    {% block content %} {% endblock content %}
 
-<script>
-    // Modal Image Gallery
-    function onClick(element) {
-      document.getElementById("img01").src = element.src;
-      document.getElementById("modal01").style.display = "block";
-      var captionText = document.getElementById("caption");
-      captionText.innerHTML = element.alt;
-    }
+    <script>
+        // Modal Image Gallery
+        function onClick(element) {
+            document.getElementById("img01").src = element.src;
+            document.getElementById("modal01").style.display = "block";
+            var captionText = document.getElementById("caption");
+            captionText.innerHTML = element.alt;
+        }
 
-    // Toggle between showing and hiding the sidebar when clicking the menu icon
-    var mySidebar = document.getElementById("mySidebar");
+        // Toggle between showing and hiding the sidebar when clicking the menu icon
+        var mySidebar = document.getElementById("mySidebar");
 
-    function w3_open() {
-      if (mySidebar.style.display === 'block') {
-        mySidebar.style.display = 'none';
-      } else {
-        mySidebar.style.display = 'block';
-      }
-    }
+        function w3_open() {
+            if (mySidebar.style.display === 'block') {
+                mySidebar.style.display = 'none';
+            } else {
+                mySidebar.style.display = 'block';
+            }
+        }
 
-    // Close the sidebar with the close button
-    function w3_close() {
-        mySidebar.style.display = "none";
-    }
-</script>
+        // Close the sidebar with the close button
+        function w3_close() {
+            mySidebar.style.display = "none";
+        }
+    </script>
 
 </body>
 </html>
