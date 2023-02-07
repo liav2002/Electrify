@@ -26,17 +26,20 @@
             font-family: "Copperplate", Copperplate, Fantasy;
         } </style>
 
-        <!--Script for Live Daily Consumption Graph -->
+        <script src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
+        <script src="https://canvasjs.com/assets/script/jquery.canvasjs.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+        <!--Script for Live Daily Consumption Graph-->
         <script>
             window.onload = function () {
                 console.log("Iniside daily consumotion live graph builder.")
                 var dataPoints1 = [];
-                var dataPoints2 = [];
-                var dataPoints3 = [];
 
                 var options = {
                     title: {
-                        text: "Electricity Generation in Turbine"
+                        text: "Daily Consumption Graph"
                     },
                     axisX: {
                         title: "chart updates every 2 secs"
@@ -60,27 +63,12 @@
                         yValueFormatString: "###.00Wh",
                         xValueFormatString: "hh:mm:ss TT",
                         showInLegend: true,
-                        name: "Turbine 1",
+                        name: "INA Measure",
                         dataPoints: dataPoints1
-                    },
-                        {
-                            type: "line",
-                            xValueType: "dateTime",
-                            yValueFormatString: "###.00Wh",
-                            showInLegend: true,
-                            name: "Turbine 2",
-                            dataPoints: dataPoints2
-                        }, {
-                            type: "line",
-                            xValueType: "dateTime",
-                            yValueFormatString: "###.00Wh",
-                            showInLegend: true,
-                            name: "Turbine 2",
-                            dataPoints: dataPoints3
-                        }]
+                    }]
                 };
 
-                var chart = new CanvasJS.Chart("chartContainer", options)
+                var chart = new CanvasJS.Chart("daily", options)
 
                 function toggleDataSeries(e) {
                     if (typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
@@ -94,58 +82,185 @@
                 var updateInterval = 2000;
                 // initial value
                 var yValue1 = 800;
-                var yValue2 = 810;
-                var yValue3 = 780;
 
-                var time = new Date;
-                // starting at 10.00 am
-                time.setHours(10);
-                time.setMinutes(00);
-                time.setSeconds(00);
-                time.setMilliseconds(00);
+                // get current time for graph.
+                var time = new Date();
+                time.setHours(time.getHours());
+                time.setMinutes(time.getMinutes());
+                time.setSeconds(time.getSeconds());
+                time.setMilliseconds(time.getMilliseconds());
 
-                function updateChart(count) {
+                function InitializedChartData() {
+                    var json = $.ajax({
+                        url: "/system/get_summary_daily_consumption",
+                        dataType: "json",
+                        success: function (jsonData) {
+                            count = 100;
+                            var deltaY1;
+                            for (var i = 0; i < count; i++) {
+                                time.setTime(time.getTime() + updateInterval);
+                                deltaY1 = -1 + Math.random() * (1 + 1);
+
+                                // adding random value and rounding it to two digits.
+                                yValue1 = Math.round((yValue1 + deltaY1) * 100) / 100;
+
+                                // pushing the new values
+                                dataPoints1.push({
+                                    x: time.getTime(),
+                                    y: yValue1
+                                });
+                            }
+
+                            // updating legend text with  updated with y Value
+                            options.data[0].legendText = "Current INA Measure : " + yValue1 + "Wh";
+                            chart.render();
+                        }
+                    });
+                }
+
+                function updateChart() {
+                    var json = $.ajax({
+                        url: "/system/get_current_measure",
+                        dataType: "json",
+                        success: function (jsonData) {
+                            count = 1;
+                            var deltaY1;
+                            for (var i = 0; i < count; i++) {
+                                time.setTime(time.getTime() + updateInterval);
+                                deltaY1 = -1 + Math.random() * (1 + 1);
+
+                                // adding random value and rounding it to two digits.
+                                yValue1 = Math.round((yValue1 + deltaY1) * 100) / 100;
+
+                                // pushing the new values
+                                dataPoints1.push({
+                                    x: time.getTime(),
+                                    y: yValue1
+                                });
+                            }
+
+                            // updating legend text with  updated with y Value
+                            options.data[0].legendText = "Current INA Measure : " + yValue1 + "Wh";
+                            chart.render();
+                        }
+                    });
+                }
+
+                function updateChartRandomaly(count) {
                     count = count || 1;
-                    var deltaY1, deltaY2, deltaY3;
+                    var deltaY1;
                     for (var i = 0; i < count; i++) {
                         time.setTime(time.getTime() + updateInterval);
                         deltaY1 = -1 + Math.random() * (1 + 1);
-                        deltaY2 = -1 + Math.random() * (1 + 1);
-                        deltaY3 = -1 + Math.random() * (1 + 1);
 
                         // adding random value and rounding it to two digits.
                         yValue1 = Math.round((yValue1 + deltaY1) * 100) / 100;
-                        yValue2 = Math.round((yValue2 + deltaY2) * 100) / 100;
-                        yValue3 = Math.round((yValue3 + deltaY3) * 100) / 100;
 
                         // pushing the new values
                         dataPoints1.push({
                             x: time.getTime(),
                             y: yValue1
                         });
-                        dataPoints2.push({
-                            x: time.getTime(),
-                            y: yValue2
-                        });
-                        dataPoints3.push({
-                            x: time.getTime(),
-                            y: yValue3
-                        });
                     }
 
                     // updating legend text with  updated with y Value
-                    options.data[0].legendText = "Turbine 1 : " + yValue1 + "Wh";
-                    options.data[1].legendText = "Turbine 2 : " + yValue2 + "Wh";
-                    options.data[2].legendText = "Turbine 3 : " + yValue3 + "Wh";
+                    options.data[0].legendText = "Current INA Measure : " + yValue1 + "Wh";
                     chart.render();
                 }
 
                 // generates first set of dataPoints
-                updateChart(100);
+                updateChartRandomaly(100)
                 setInterval(function () {
-                    updateChart()
+                    updateChartRandomaly()
                 }, updateInterval);
             }
+        </script>
+
+        <!--Script for Yearly Consumption Graph-->
+        <script>
+            google.charts.load('current', {packages: ['corechart', 'bar']});
+            google.charts.setOnLoadCallback(drawYearlyGraph);
+
+            function drawYearlyGraph() {
+                var json = $.ajax({
+                    url: "/system/get_yearly_consumption",
+                    dataType: "json",
+                    success: function (jsonData) {
+                        var array = [];
+                        array.push(["Month", "Power"])
+
+                        for (var i in jsonData)
+                            array.push([i, jsonData[i]]);
+
+                        var data = new google.visualization.arrayToDataTable(array);
+
+                        date = new Date();
+                        year = date.getFullYear();
+
+                        var options = {
+                            colors: ['#66CD00'],
+                            title: year,
+                            hAxis: {
+                                title: 'Months',
+                            },
+                            vAxis: {
+                                title: 'Consumption (KW/H)'
+                            }
+                        };
+
+                        var chart = new google.visualization.ColumnChart(
+                            document.getElementById('yearly'));
+
+                        chart.draw(data, options);
+                    }
+                });
+            }
+
+            setInterval(drawYearlyGraph, 2000); // The interval set to 2 seconds
+        </script>
+
+        <!--Script for Monthly Consumption Graph-->
+        <script>
+            google.charts.load('current', {packages: ['corechart', 'bar']});
+            google.charts.setOnLoadCallback(drawMonthlyGraph);
+
+            function drawMonthlyGraph() {
+                var json = $.ajax({
+                    url: "/system/get_monthly_consumption",
+                    dataType: "json",
+                    success: function (jsonData) {
+                        var array = [];
+                        array.push(["Day", "Power"])
+
+                        for (var i in jsonData)
+                            array.push([i, jsonData[i]]);
+
+                        var data = new google.visualization.arrayToDataTable(array);
+
+                        date = new Date();
+                        month = date.toLocaleString('default', {month: 'long'});
+
+                        var options = {
+                            colors: ['#006600'],
+                            title: month,
+                            hAxis: {
+                                title: 'days',
+                            },
+                            vAxis: {
+                                title: 'Consumption (KW/H)'
+                            }
+                        };
+
+
+                        var chart = new google.visualization.ColumnChart(
+                            document.getElementById('monthly'));
+
+                        chart.draw(data, options);
+                    }
+                });
+            }
+
+            setInterval(drawMonthlyGraph, 2000); // The interval set to 2 seconds
         </script>
     </head>
 
@@ -197,140 +312,54 @@
         </div>
 
         <!--graphs-->
-        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-        <script type="text/javascript">
-            google.charts.load('current', {'packages': ['corechart']});
-            google.charts.setOnLoadCallback(drawChart);
-            function drawChart() {
-                var json = $.ajax({
-                    url: "/system/get_daily_consumption",
-                    dataType: "json",
-                    success: function (jsonData) {
-                        var array = [];
-                        array.push(["Hour", "Power"])
-
-                        for (var i in jsonData)
-                            array.push([i, jsonData[i]]);
-
-                        var data = new google.visualization.arrayToDataTable(array);
-
-                        var options = {
-                            title: 'consumption',
-                            curveType: 'function',
-                            hAxis: {title: 'Time (hours)'},
-                            vAxis: {title: 'consumpsion (KW/H)'},
-                            backgroundColor: {fill: "#f1f1f1"}
-                        };
-
-                        var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
-
-                        chart.draw(data, options);
-                    }
-                });
-            }
-            setInterval(drawChart, 5000); // The interval set to 5 seconds
-        </script>
+        {#        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>#}
+        {#        <script type="text/javascript">#}
+        {#            google.charts.load('current', {'packages': ['corechart']});#}
+        {#            google.charts.setOnLoadCallback(drawChart);#}
+        {##}
+        {#            function drawChart() {#}
+        {#                var json = $.ajax({#}
+        {#                    url: "/system/get_daily_consumption",#}
+        {#                    dataType: "json",#}
+        {#                    success: function (jsonData) {#}
+        {#                        var array = [];#}
+        {#                        array.push(["Hour", "Power"])#}
+        {##}
+        {#                        for (var i in jsonData)#}
+        {#                            array.push([i, jsonData[i]]);#}
+        {##}
+        {#                        var data = new google.visualization.arrayToDataTable(array);#}
+        {##}
+        {#                        var options = {#}
+        {#                            title: 'consumption',#}
+        {#                            curveType: 'function',#}
+        {#                            hAxis: {title: 'Time (hours)'},#}
+        {#                            vAxis: {title: 'consumpsion (KW/H)'},#}
+        {#                            backgroundColor: {fill: "#f1f1f1"}#}
+        {#                        };#}
+        {##}
+        {#                        var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));#}
+        {##}
+        {#                        chart.draw(data, options);#}
+        {#                    }#}
+        {#                });#}
+        {#            }#}
+        {##}
+        {#            setInterval(drawChart, 5000); // The interval set to 5 seconds#}
+        {#        </script>#}
 
         <!--daily use graph-->
-        <div id="curve_chart" style="width: 800; height: 450px;"></div>
+        {#        <div id="curve_chart" style="width: 800; height: 450px;"></div>#}
 
-        <div id="chartContainer" style="height: 370px; width: 100%;"></div>
-        <script src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
-        <script src="https://canvasjs.com/assets/script/jquery.canvasjs.min.js"></script>
+        <div id="daily" style="height: 370px; width: 100%;"></div>
     </div>
 
     <!-- Consumption Section -->
     <div class="w3-container" style="padding:85px 8px 120px" id=consumption>
         <!-- yearly graph-->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-        <script>
-            google.charts.load('current', {packages: ['corechart', 'bar']});
-            google.charts.setOnLoadCallback(drawBasic);
-
-            function drawBasic() {
-                var json = $.ajax({
-                    url: "/system/get_yearly_consumption",
-                    dataType: "json",
-                    success: function (jsonData) {
-                        var array = [];
-                        array.push(["Month", "Power"])
-
-                        for (var i in jsonData)
-                            array.push([i, jsonData[i]]);
-
-                        var data = new google.visualization.arrayToDataTable(array);
-
-                        date = new Date();
-                        year = date.getFullYear();
-
-                        var options = {
-                            colors: ['#66CD00'],
-                            title: year,
-                            hAxis: {
-                                title: 'Months',
-                            },
-                            vAxis: {
-                                title: 'Consumption (KW/H)'
-                            }
-                        };
-
-                        var chart = new google.visualization.ColumnChart(
-                            document.getElementById('yearly'));
-
-                        chart.draw(data, options);
-                    }
-                });
-            }
-
-            setInterval(drawBasic, 5000); // The interval set to 5 seconds
-        </script>
         <div id="yearly" class="consumptionGraph"></div>
 
         <!--monthly graph-->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-        <script>
-            google.charts.load('current', {packages: ['corechart', 'bar']});
-            google.charts.setOnLoadCallback(drawBasic);
-
-            function drawBasic() {
-                var json = $.ajax({
-                    url: "/system/get_monthly_consumption",
-                    dataType: "json",
-                    success: function (jsonData) {
-                        var array = [];
-                        array.push(["Day", "Power"])
-
-                        for (var i in jsonData)
-                            array.push([i, jsonData[i]]);
-
-                        var data = new google.visualization.arrayToDataTable(array);
-
-                        date = new Date();
-                        month = date.toLocaleString('default', {month: 'long'});
-
-                        var options = {
-                            colors: ['#006600'],
-                            title: month,
-                            hAxis: {
-                                title: 'days',
-                            },
-                            vAxis: {
-                                title: 'Consumption (KW/H)'
-                            }
-                        };
-
-
-                        var chart = new google.visualization.ColumnChart(
-                            document.getElementById('monthly'));
-
-                        chart.draw(data, options);
-                    }
-                });
-            }
-
-            setInterval(drawBasic, 5000); // The interval set to 5 seconds
-        </script>
         <div id="monthly" class="consumptionGraph"></div>
 
         <!--Switch between monthly to yearly graph-->

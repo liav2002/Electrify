@@ -25,9 +25,14 @@ def home():
     return render_template('home.html', isLoggedIn=user_id != 0)
 
 
-@app.route("/system/get_daily_consumption", methods=['GET'])
-def daily_consumption():
+@app.route("/system/get_summary_daily_consumption", methods=['GET'])
+def summary_daily_consumption():
     return get_daily_consumption(user_id, datetime.datetime.now().strftime("%Y-%m-%d"))
+
+
+@app.route("/system/get_current_measure", methods=['GET'])
+def get_current_measure():
+    return {}
 
 
 @app.route("/system/get_monthly_consumption", methods=['GET'])
