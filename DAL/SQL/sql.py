@@ -652,14 +652,14 @@ def get_yearly_consumption(user_id):
             rows = cursor.fetchall()
             if rows[0][0] is None:
                 if f[2] != '0':
-                    consumption[calendar.month_name[int(f[2:4])]] = 0
+                    consumption[int(f[2:4])] = 0
                 else:
-                    consumption[calendar.month_name[int(f[3])]] = 0
+                    consumption[int(f[3])] = 0
             else:
                 if f[2] != '0':
-                    consumption[calendar.month_name[int(f[2:4])]] = rows[0][0]
+                    consumption[int(f[2:4])] = rows[0][0]
                 else:
-                    consumption[calendar.month_name[int(f[3])]] = rows[0][0]
+                    consumption[int(f[3])] = rows[0][0]
 
         return consumption
 

@@ -34,7 +34,6 @@
         <!--Script for Live Daily Consumption Graph-->
         <script>
             window.onload = function () {
-                console.log("Iniside daily consumotion live graph builder.")
                 var dataPoints1 = [];
                 var dataPoints2 = [];
                 var dataPoints3 = [];
@@ -242,6 +241,13 @@
             google.charts.load('current', {packages: ['corechart', 'bar']});
             google.charts.setOnLoadCallback(drawYearlyGraph);
 
+            function getMonthName(monthNumber) {
+                const date = new Date();
+                date.setMonth(monthNumber - 1);
+
+                return date.toLocaleString('en-US', {month: 'long'});
+            }
+
             function drawYearlyGraph() {
                 var json = $.ajax({
                     url: "/system/get_yearly_consumption",
@@ -251,7 +257,7 @@
                         array.push(["Month", "Power"])
 
                         for (var i in jsonData)
-                            array.push([i, jsonData[i]]);
+                            array.push([getMonthName(i), jsonData[i]]);
 
                         var data = new google.visualization.arrayToDataTable(array);
 
