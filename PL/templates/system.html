@@ -328,7 +328,7 @@
     <body>
     <!--!Battery Status Section -->
     <div class="w3-container w3-light-grey" style="padding:85px 8px 120px" id="battery">
-        <!--Current Data-->
+        <!--Current Date-->
         <h1>
             <div id="current_date"/>
             <script>
@@ -372,46 +372,7 @@
             </div>
         </div>
 
-        <!--graphs-->
-        {#        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>#}
-        {#        <script type="text/javascript">#}
-        {#            google.charts.load('current', {'packages': ['corechart']});#}
-        {#            google.charts.setOnLoadCallback(drawChart);#}
-        {##}
-        {#            function drawChart() {#}
-        {#                var json = $.ajax({#}
-        {#                    url: "/system/get_daily_consumption",#}
-        {#                    dataType: "json",#}
-        {#                    success: function (jsonData) {#}
-        {#                        var array = [];#}
-        {#                        array.push(["Hour", "Power"])#}
-        {##}
-        {#                        for (var i in jsonData)#}
-        {#                            array.push([i, jsonData[i]]);#}
-        {##}
-        {#                        var data = new google.visualization.arrayToDataTable(array);#}
-        {##}
-        {#                        var options = {#}
-        {#                            title: 'consumption',#}
-        {#                            curveType: 'function',#}
-        {#                            hAxis: {title: 'Time (hours)'},#}
-        {#                            vAxis: {title: 'consumpsion (KW/H)'},#}
-        {#                            backgroundColor: {fill: "#f1f1f1"}#}
-        {#                        };#}
-        {##}
-        {#                        var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));#}
-        {##}
-        {#                        chart.draw(data, options);#}
-        {#                    }#}
-        {#                });#}
-        {#            }#}
-        {##}
-        {#            setInterval(drawChart, 5000); // The interval set to 5 seconds#}
-        {#        </script>#}
-
-        <!--daily use graph-->
-        {#        <div id="curve_chart" style="width: 800; height: 450px;"></div>#}
-
+        <!--daily graph-->
         <div id="daily" style="height: 370px; width: 100%;"></div>
     </div>
 
