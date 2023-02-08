@@ -36,6 +36,8 @@
             window.onload = function () {
                 console.log("Iniside daily consumotion live graph builder.")
                 var dataPoints1 = [];
+                var dataPoints2 = [];
+                var dataPoints3 = [];
 
                 var options = {
                     title: {
@@ -45,7 +47,7 @@
                         title: "chart updates every 2 secs"
                     },
                     axisY: {
-                        suffix: "Wh"
+                        suffix: ""
                     },
                     toolTip: {
                         shared: true
@@ -63,9 +65,29 @@
                         yValueFormatString: "###.00Wh",
                         xValueFormatString: "hh:mm:ss TT",
                         showInLegend: true,
-                        name: "INA Measure",
+                        name: "INA Measure (Power)",
                         dataPoints: dataPoints1
-                    }]
+                    },
+
+                        {
+                            type: "line",
+                            xValueType: "dateTime",
+                            yValueFormatString: "###.00V",
+                            xValueFormatString: "hh:mm:ss TT",
+                            showInLegend: true,
+                            name: "INA Measure (Voltage)",
+                            dataPoints: dataPoints2
+                        },
+
+                        {
+                            type: "line",
+                            xValueType: "dateTime",
+                            yValueFormatString: "###.00A",
+                            xValueFormatString: "hh:mm:ss TT",
+                            showInLegend: true,
+                            name: "INA Measure (Currency)",
+                            dataPoints: dataPoints3
+                        }]
                 };
 
                 var chart = new CanvasJS.Chart("daily", options)
@@ -80,8 +102,11 @@
                 }
 
                 var updateInterval = 2000;
+
                 // initial value
-                var yValue1 = 800;
+                var powerValue = 800;
+                var voltageValue = 800;
+                var currencyValue = 800;
 
                 // get current time for graph.
                 var time = new Date();
@@ -95,24 +120,34 @@
                         url: "/system/get_summary_daily_consumption",
                         dataType: "json",
                         success: function (jsonData) {
-                            count = 100;
-                            var deltaY1;
-                            for (var i = 0; i < count; i++) {
-                                time.setTime(time.getTime() + updateInterval);
-                                deltaY1 = -1 + Math.random() * (1 + 1);
-
+                            for (let k in jsonData) {
                                 // adding random value and rounding it to two digits.
-                                yValue1 = Math.round((yValue1 + deltaY1) * 100) / 100;
+                                var t = Date.parse(jsonData[k][0]);
+                                powerValue = jsonData[k][1];
+                                voltageValue = jsonData[k][2];
+                                currencyValue = jsonData[k][3];
 
                                 // pushing the new values
                                 dataPoints1.push({
-                                    x: time.getTime(),
-                                    y: yValue1
+                                    x: t,
+                                    y: powerValue
+                                });
+
+                                dataPoints2.push({
+                                    x: t,
+                                    y: voltageValue
+                                });
+
+                                dataPoints3.push({
+                                    x: t,
+                                    y: currencyValue
                                 });
                             }
 
                             // updating legend text with  updated with y Value
-                            options.data[0].legendText = "Current INA Measure : " + yValue1 + "Wh";
+                            options.data[0].legendText = "Current INA Measure (Power) : " + powerValue + "Wh";
+                            options.data[1].legendText = "Current INA Measure (Voltage) : " + voltageValue + "V";
+                            options.data[2].legendText = "Current INA Measure (Currency) : " + currencyValue + "A";
                             chart.render();
                         }
                     });
@@ -123,24 +158,31 @@
                         url: "/system/get_current_measure",
                         dataType: "json",
                         success: function (jsonData) {
-                            count = 1;
-                            var deltaY1;
-                            for (var i = 0; i < count; i++) {
-                                time.setTime(time.getTime() + updateInterval);
-                                deltaY1 = -1 + Math.random() * (1 + 1);
+                            var t = Date.parse(jsonData[0][0]);
+                            powerValue = jsonData[0][1];
+                            voltageValue = jsonData[0][2];
+                            currencyValue = jsonData[0][3];
 
-                                // adding random value and rounding it to two digits.
-                                yValue1 = Math.round((yValue1 + deltaY1) * 100) / 100;
+                            // pushing the new values
+                            dataPoints1.push({
+                                x: t,
+                                y: powerValue
+                            });
 
-                                // pushing the new values
-                                dataPoints1.push({
-                                    x: time.getTime(),
-                                    y: yValue1
-                                });
-                            }
+                            dataPoints2.push({
+                                x: t,
+                                y: voltageValue
+                            });
+
+                            dataPoints3.push({
+                                x: t,
+                                y: currencyValue
+                            });
 
                             // updating legend text with  updated with y Value
-                            options.data[0].legendText = "Current INA Measure : " + yValue1 + "Wh";
+                            options.data[0].legendText = "Current INA Measure (Power) : " + powerValue + "Wh";
+                            options.data[1].legendText = "Current INA Measure (Voltage) : " + voltageValue + "V";
+                            options.data[2].legendText = "Current INA Measure (Currency) : " + currencyValue + "A";
                             chart.render();
                         }
                     });
@@ -148,30 +190,49 @@
 
                 function updateChartRandomaly(count) {
                     count = count || 1;
-                    var deltaY1;
+                    var deltaPower;
+                    var deltaVoltage;
+                    var deltaCurrency;
+
                     for (var i = 0; i < count; i++) {
                         time.setTime(time.getTime() + updateInterval);
-                        deltaY1 = -1 + Math.random() * (1 + 1);
+                        deltaPower = -1 + Math.random() * (1 + 1);
+                        deltaVoltage = -1 + Math.random() * (1 + 1);
+                        deltaCurrency = -1 + Math.random() * (1 + 1);
 
                         // adding random value and rounding it to two digits.
-                        yValue1 = Math.round((yValue1 + deltaY1) * 100) / 100;
+                        powerValue = Math.round((powerValue + deltaPower) * 100) / 100;
+                        voltageValue = Math.round((voltageValue + deltaVoltage) * 100) / 100;
+                        currencyValue = Math.round((currencyValue + deltaCurrency) * 100) / 100;
 
                         // pushing the new values
                         dataPoints1.push({
                             x: time.getTime(),
-                            y: yValue1
+                            y: powerValue
+                        });
+
+                        dataPoints2.push({
+                            x: time.getTime(),
+                            y: voltageValue
+                        });
+
+                        dataPoints3.push({
+                            x: time.getTime(),
+                            y: currencyValue
                         });
                     }
 
                     // updating legend text with  updated with y Value
-                    options.data[0].legendText = "Current INA Measure : " + yValue1 + "Wh";
+                    options.data[0].legendText = "Current INA Measure (Power) : " + powerValue + "Wh";
+                    options.data[1].legendText = "Current INA Measure (Voltage) : " + voltageValue + "V";
+                    options.data[2].legendText = "Current INA Measure (Currency) : " + currencyValue + "A";
                     chart.render();
                 }
 
                 // generates first set of dataPoints
-                updateChartRandomaly(100)
+                InitializedChartData()
                 setInterval(function () {
-                    updateChartRandomaly()
+                    updateChart()
                 }, updateInterval);
             }
         </script>

@@ -526,25 +526,85 @@ def get_c_year(user_id):
 
 
 def get_daily_consumption(user_id, date):
+    """
+    Descrription: get summary of daily consumption.
+    :param user_id: connected user id.
+    :param full_date: in format of YYYY-MM-DD
+    :return: JSON data in format of {i, [Date, Power, Voltage, Currency]}
+    """
+
     try:
         sqlHandler = create_connection()
-        consumption = {}  # {"Hour": "Power"}
-        hours_filters = ['00:%', '01:%', '02:%', '03:%', '04:%', '05:%', '06:%', '07:%', '08:%', '09:%', '10:%', '11:%',
-                         '12:%', '13:%', '14:%', '15:%', '16:%', '17:%', '18:%', '19:%', '20:%', '21:%', '22:%', '23:%']
+        result = {}
 
-        for f in hours_filters:
-            query = f"SELECT SUM(Power) FROM Samples WHERE UserID={user_id} AND Time LIKE '{date + ' ' + f}';"
-            cursor = sqlHandler.execute(query)
-            rows = cursor.fetchall()
-            if rows[0][0] is None:
-                consumption[f[0:2] + ":00"] = 0
-            else:
-                consumption[f[0:2] + ":00"] = rows[0][0]
+        query = f"SELECT Power, Voltage, Time FROM Samples WHERE UserID={user_id} AND Time LIKE '{date + '%'}';"
+        cursor = sqlHandler.execute(query)
+        rows = cursor.fetchall()
 
-        return consumption
+        if rows == [] or rows[0][0] is None:
+            pass
+
+        else:
+            i = 0
+            for r in rows:
+                result[i] = [r[2], r[0], r[1], r[0] / r[1]]
+                i += 1
+
+        return result
 
     except Error as e:
         print("ERROR:get_daily_consumption: " + str(e))
+        return -1
+
+
+def get_current_measure(user_id, full_date):
+    """
+    Description: This function connect to out db, nd get the current measure from Samples Table.
+    :param user_id: connected user id.
+    :param full_date: in format of YYYY-MM-DD HH:MM:SS.MS
+    :return: JSON data in format of {0, [Date, Power, Voltage, Currency]}
+    """
+
+    # Divides the time to a standard deviation of 1 seconds:
+
+    # Divide full_date to parts
+    s = full_date[17:]  # Get seconds part from time
+    m = full_date[14:16]  # Get minutes part from time
+    h = full_date[11:13]  # Get hour part from time
+    time = full_date[:11]  # Get date part
+
+    # generate date1 -> right
+    s1 = str((int(s) + 1) % 60).zfill(2)
+    m1 = str((int(m) + 1) % 60).zfill(2) if s1 == '00' else m
+    h1 = str((int(h) + 1) % 24).zfill(2) if m1 == '00' else h
+    date1 = time + h1 + ':' + m1 + ':' + s1
+
+    # generate date2 -> left
+    s2 = str((int(s) - 1) % 60).zfill(2)
+    m2 = str((int(m) - 1) % 60).zfill(2) if s2 == '59' else m
+    h2 = str((int(h) - 1) % 24).zfill(2) if m2 == '59' else h
+    date2 = time + h2 + ':' + m2 + ':' + s2
+
+    try:
+        sqlHandler = create_connection()
+        currentMeasure = {}
+
+        query = f"SELECT Power, Voltage FROM Samples WHERE UserID={user_id} AND (Time LIKE '{full_date + '%'}' or Time LIKE '{date1 + '%'}' or Time LIKE '{date2 + '%'}');"
+        cursor = sqlHandler.execute(query)
+        rows = cursor.fetchall()
+
+        if rows == [] or rows[0][0] is None:
+            currentMeasure[0] = [full_date, 0, 0, 0]
+        else:
+            average_power = sum(r[0] for r in rows) / len(rows)
+            average_voltage = sum(r[1] for r in rows) / len(rows)
+            average_currency = average_power / average_voltage  # I = P / V
+            currentMeasure[0] = [full_date, average_power, average_voltage, average_currency]
+
+        return currentMeasure
+
+    except Error as e:
+        print("ERROR:get_current_measure: " + str(e))
         return -1
 
 

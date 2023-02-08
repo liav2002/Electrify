@@ -5,7 +5,7 @@ from forms import RegistrationForm, LoginForm, AccountForm
 
 from DAL.SQL.sql import add_user, add_credit, add_battery, \
     get_user_id_by_email, get_number_of_batteries, check_login_fields, \
-    get_daily_consumption, get_monthly_consumption, get_yearly_consumption
+    get_daily_consumption, get_current_measure, get_monthly_consumption, get_yearly_consumption
 from DAL.Entities.User import User
 from DAL.Entities.Credit import Credit
 from DAL.Entities.Battery import Battery
@@ -31,8 +31,8 @@ def summary_daily_consumption():
 
 
 @app.route("/system/get_current_measure", methods=['GET'])
-def get_current_measure():
-    return {}
+def current_measure():
+    return get_current_measure(user_id, str(datetime.datetime.now())[0:19])  # [0:19] --> for ignore ms
 
 
 @app.route("/system/get_monthly_consumption", methods=['GET'])
