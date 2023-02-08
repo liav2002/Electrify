@@ -34,8 +34,14 @@ def fill_samples(user_id):
             """sample = [sample_id, user_id, datetime.datetime.now(), round(ina_handler.getPower(), 3),
                       round(ina_handler.getVoltage(), 3)]"""
 
-            sample = [sample_id, user_id, datetime.datetime.now(), round(uniform(0, 100), 3),
-                      round(uniform(0, 5), 3)]
+            powerValue = 800
+            voltageValue = 600
+
+            deltaPower = -1 + uniform(0, 5)
+            deltaVoltage = -1 + uniform(0, 5)
+
+            sample = [sample_id, user_id, datetime.datetime.now(), round(powerValue + deltaPower, 3),
+                      round(voltageValue + deltaVoltage, 3)]
 
             # Insert sample to DB
             if add_sample(sample[0], sample[1], sample[2], sample[3], sample[4]):
