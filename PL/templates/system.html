@@ -291,6 +291,12 @@
             google.charts.load('current', {packages: ['corechart', 'bar']});
             google.charts.setOnLoadCallback(drawMonthlyGraph);
 
+            function pad(num, size) {
+                num = num.toString();
+                while (num.length < size) num = "0" + num;
+                return num;
+            }
+
             function drawMonthlyGraph() {
                 var json = $.ajax({
                     url: "/system/get_monthly_consumption",
@@ -300,7 +306,7 @@
                         array.push(["Day", "Power"])
 
                         for (var i in jsonData)
-                            array.push([i, jsonData[i]]);
+                            array.push([pad(i, 2), jsonData[i]]);
 
                         var data = new google.visualization.arrayToDataTable(array);
 
