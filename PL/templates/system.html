@@ -25,109 +25,224 @@
         <style>.p {
             font-family: "Copperplate", Copperplate, Fantasy;
         } </style>
-    </head>
 
-    <body>
-    <!--!Battery Status Section -->
-    <div class="w3-container w3-light-grey" style="padding:85px 8px 120px" id="battery">
-        <h1>
-            <div id="current_date"/>
-            <script>
-                date = new Date();
-                year = date.getFullYear();
-                month = date.getMonth() + 1;
-                day = date.getDate();
-                document.getElementById("current_date").innerHTML = month + "/" + day + "/" + year;
-            </script>
-        </h1>
-        </p>
-
-        <div class="row">
-            <<!--!Battery -->
-            <div class="column">
-                <h2><p class="p">Battery</p></h2>
-                <div class="battery">
-                    {% if battery.capacity >= 50 %}
-                        <div class="battery-level-high" style="width: {{ battery.capacity }}%">
-                            <div class="w3-center w3-xlarge" style="width: 500px ">{{ battery.capacity }}%</div>
-                        </div>
-                    {% elif battery.capacity > 25 %}
-                        <div class="battery-level-medium" style="width: {{ battery.capacity }}%">
-                            <div class="w3-center" style="width: 500px">{{ battery.capacity }}%</div>
-                        </div>
-                    {% else %}
-                        <div class="battery-level-low" style="width: {{ battery.capacity }}%">
-                            <div class="w3-center" style="width: 500px">{{ battery.capacity }}%</div>
-                        </div>
-                    {% endif %}
-                </div>
-            </div>
-            <!--Life expectancy of the battery -->
-            <div class="column">
-                <h2><p class="p" id="Battery_Label">Battery's life</p></h2>
-                <div class="battery">
-                    <div class="battery-consumption" style="width: {{ battery.consumption * 5 }}%">
-                        <div class="w3-center w3-xlarge" style="width: 500px ">{{ battery.consumption }}KWh</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!--graphs-->
-        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+        <script src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
+        <script src="https://canvasjs.com/assets/script/jquery.canvasjs.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-        <script type="text/javascript">
-            google.charts.load('current', {'packages': ['corechart']});
-            google.charts.setOnLoadCallback(drawChart);
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
-            function sleep(ms) {
-                return new Promise(resolve => setTimeout(resolve, ms));
-            }
+        <!--Script for Live Daily Consumption Graph-->
+        <script>
+            window.onload = function () {
+                console.log("Iniside daily consumotion live graph builder.")
+                var dataPoints1 = [];
+                var dataPoints2 = [];
+                var dataPoints3 = [];
 
-            function drawChart() {
-                var json = $.ajax({
-                    url: "/system/get_daily_consumption",
-                    dataType: "json",
-                    success: function (jsonData) {
-                        var array = [];
-                        array.push(["Hour", "Power"])
+                var options = {
+                    title: {
+                        text: "Daily Consumption Graph"
+                    },
+                    axisX: {
+                        title: "chart updates every 2 secs"
+                    },
+                    axisY: {
+                        suffix: ""
+                    },
+                    toolTip: {
+                        shared: true
+                    },
+                    legend: {
+                        cursor: "pointer",
+                        verticalAlign: "top",
+                        fontSize: 22,
+                        fontColor: "dimGrey",
+                        itemclick: toggleDataSeries
+                    },
+                    data: [{
+                        type: "line",
+                        xValueType: "dateTime",
+                        yValueFormatString: "###.00Wh",
+                        xValueFormatString: "hh:mm:ss TT",
+                        showInLegend: true,
+                        name: "INA Measure (Power)",
+                        dataPoints: dataPoints1
+                    },
 
-                        for (var i in jsonData)
-                            array.push([i, jsonData[i]]);
+                        {
+                            type: "line",
+                            xValueType: "dateTime",
+                            yValueFormatString: "###.00V",
+                            xValueFormatString: "hh:mm:ss TT",
+                            showInLegend: true,
+                            name: "INA Measure (Voltage)",
+                            dataPoints: dataPoints2
+                        },
 
-                        var data = new google.visualization.arrayToDataTable(array);
+                        {
+                            type: "line",
+                            xValueType: "dateTime",
+                            yValueFormatString: "###.00A",
+                            xValueFormatString: "hh:mm:ss TT",
+                            showInLegend: true,
+                            name: "INA Measure (Currency)",
+                            dataPoints: dataPoints3
+                        }]
+                };
 
-                        var options = {
-                            title: 'consumption',
-                            curveType: 'function',
-                            hAxis: {title: 'Time (hours)'},
-                            vAxis: {title: 'consumpsion (KW/H)'},
-                            backgroundColor: {fill: "#f1f1f1"}
-                        };
+                var chart = new CanvasJS.Chart("daily", options)
 
-                        var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
-
-                        chart.draw(data, options);
+                function toggleDataSeries(e) {
+                    if (typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+                        e.dataSeries.visible = false;
+                    } else {
+                        e.dataSeries.visible = true;
                     }
-                });
-            }
+                    e.chart.render();
+                }
 
-            setInterval(drawChart, 5000); // The interval set to 5 seconds
+                var updateInterval = 2000;
+
+                // initial value
+                var powerValue = 800;
+                var voltageValue = 800;
+                var currencyValue = 800;
+
+                // get current time for graph.
+                var time = new Date();
+                time.setHours(time.getHours());
+                time.setMinutes(time.getMinutes());
+                time.setSeconds(time.getSeconds());
+                time.setMilliseconds(time.getMilliseconds());
+
+                function InitializedChartData() {
+                    var json = $.ajax({
+                        url: "/system/get_summary_daily_consumption",
+                        dataType: "json",
+                        success: function (jsonData) {
+                            for (let k in jsonData) {
+                                // adding random value and rounding it to two digits.
+                                var t = Date.parse(jsonData[k][0]);
+                                powerValue = jsonData[k][1];
+                                voltageValue = jsonData[k][2];
+                                currencyValue = jsonData[k][3];
+
+                                // pushing the new values
+                                dataPoints1.push({
+                                    x: t,
+                                    y: powerValue
+                                });
+
+                                dataPoints2.push({
+                                    x: t,
+                                    y: voltageValue
+                                });
+
+                                dataPoints3.push({
+                                    x: t,
+                                    y: currencyValue
+                                });
+                            }
+
+                            // updating legend text with  updated with y Value
+                            options.data[0].legendText = "Current INA Measure (Power) : " + powerValue + "Wh";
+                            options.data[1].legendText = "Current INA Measure (Voltage) : " + voltageValue + "V";
+                            options.data[2].legendText = "Current INA Measure (Currency) : " + currencyValue + "A";
+                            chart.render();
+                        }
+                    });
+                }
+
+                function updateChart() {
+                    var json = $.ajax({
+                        url: "/system/get_current_measure",
+                        dataType: "json",
+                        success: function (jsonData) {
+                            var t = Date.parse(jsonData[0][0]);
+                            powerValue = jsonData[0][1];
+                            voltageValue = jsonData[0][2];
+                            currencyValue = jsonData[0][3];
+
+                            // pushing the new values
+                            dataPoints1.push({
+                                x: t,
+                                y: powerValue
+                            });
+
+                            dataPoints2.push({
+                                x: t,
+                                y: voltageValue
+                            });
+
+                            dataPoints3.push({
+                                x: t,
+                                y: currencyValue
+                            });
+
+                            // updating legend text with  updated with y Value
+                            options.data[0].legendText = "Current INA Measure (Power) : " + powerValue + "Wh";
+                            options.data[1].legendText = "Current INA Measure (Voltage) : " + voltageValue + "V";
+                            options.data[2].legendText = "Current INA Measure (Currency) : " + currencyValue + "A";
+                            chart.render();
+                        }
+                    });
+                }
+
+                function updateChartRandomaly(count) {
+                    count = count || 1;
+                    var deltaPower;
+                    var deltaVoltage;
+                    var deltaCurrency;
+
+                    for (var i = 0; i < count; i++) {
+                        time.setTime(time.getTime() + updateInterval);
+                        deltaPower = -1 + Math.random() * (1 + 1);
+                        deltaVoltage = -1 + Math.random() * (1 + 1);
+                        deltaCurrency = -1 + Math.random() * (1 + 1);
+
+                        // adding random value and rounding it to two digits.
+                        powerValue = Math.round((powerValue + deltaPower) * 100) / 100;
+                        voltageValue = Math.round((voltageValue + deltaVoltage) * 100) / 100;
+                        currencyValue = Math.round((currencyValue + deltaCurrency) * 100) / 100;
+
+                        // pushing the new values
+                        dataPoints1.push({
+                            x: time.getTime(),
+                            y: powerValue
+                        });
+
+                        dataPoints2.push({
+                            x: time.getTime(),
+                            y: voltageValue
+                        });
+
+                        dataPoints3.push({
+                            x: time.getTime(),
+                            y: currencyValue
+                        });
+                    }
+
+                    // updating legend text with  updated with y Value
+                    options.data[0].legendText = "Current INA Measure (Power) : " + powerValue + "Wh";
+                    options.data[1].legendText = "Current INA Measure (Voltage) : " + voltageValue + "V";
+                    options.data[2].legendText = "Current INA Measure (Currency) : " + currencyValue + "A";
+                    chart.render();
+                }
+
+                // generates first set of dataPoints
+                InitializedChartData()
+                setInterval(function () {
+                    updateChart()
+                }, updateInterval);
+            }
         </script>
 
-        <!--daily use graph-->
-        <div id="curve_chart" style="width: 800; height: 450px;"></div>
-    </div>
-
-    <!-- Consumption Section -->
-    <div class="w3-container" style="padding:85px 8px 120px" id=consumption>
-        <!-- yearly graph-->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+        <!--Script for Yearly Consumption Graph-->
         <script>
             google.charts.load('current', {packages: ['corechart', 'bar']});
-            google.charts.setOnLoadCallback(drawBasic);
+            google.charts.setOnLoadCallback(drawYearlyGraph);
 
-            function drawBasic() {
+            function drawYearlyGraph() {
                 var json = $.ajax({
                     url: "/system/get_yearly_consumption",
                     dataType: "json",
@@ -162,17 +277,15 @@
                 });
             }
 
-            setInterval(drawBasic, 5000); // The interval set to 5 seconds
+            setInterval(drawYearlyGraph, 2000); // The interval set to 2 seconds
         </script>
-        <div id="yearly" class="consumptionGraph"></div>
 
-        <!--monthly graph-->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+        <!--Script for Monthly Consumption Graph-->
         <script>
             google.charts.load('current', {packages: ['corechart', 'bar']});
-            google.charts.setOnLoadCallback(drawBasic);
+            google.charts.setOnLoadCallback(drawMonthlyGraph);
 
-            function drawBasic() {
+            function drawMonthlyGraph() {
                 var json = $.ajax({
                     url: "/system/get_monthly_consumption",
                     dataType: "json",
@@ -208,8 +321,106 @@
                 });
             }
 
-            setInterval(drawBasic, 5000); // The interval set to 5 seconds
+            setInterval(drawMonthlyGraph, 2000); // The interval set to 2 seconds
         </script>
+    </head>
+
+    <body>
+    <!--!Battery Status Section -->
+    <div class="w3-container w3-light-grey" style="padding:85px 8px 120px" id="battery">
+        <!--Current Data-->
+        <h1>
+            <div id="current_date"/>
+            <script>
+                date = new Date();
+                year = date.getFullYear();
+                month = date.getMonth() + 1;
+                day = date.getDate();
+                document.getElementById("current_date").innerHTML = month + "/" + day + "/" + year;
+            </script>
+        </h1>
+        </p>
+        <!--Battery Capacity-->
+        <div class="row">
+            <<!--!Battery -->
+            <div class="column">
+                <h2><p class="p">Battery</p></h2>
+                <div class="battery">
+                    {% if battery.capacity >= 50 %}
+                        <div class="battery-level-high" style="width: {{ battery.capacity }}%">
+                            <div class="w3-center w3-xlarge" style="width: 500px ">{{ battery.capacity }}%</div>
+                        </div>
+                    {% elif battery.capacity > 25 %}
+                        <div class="battery-level-medium" style="width: {{ battery.capacity }}%">
+                            <div class="w3-center" style="width: 500px">{{ battery.capacity }}%</div>
+                        </div>
+                    {% else %}
+                        <div class="battery-level-low" style="width: {{ battery.capacity }}%">
+                            <div class="w3-center" style="width: 500px">{{ battery.capacity }}%</div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            <!--Life expectancy of the battery -->
+            <div class="column">
+                <h2><p class="p" id="Battery_Label">Battery's life</p></h2>
+                <div class="battery">
+                    <div class="battery-consumption" style="width: {{ battery.consumption * 5 }}%">
+                        <div class="w3-center w3-xlarge" style="width: 500px ">{{ battery.consumption }}KWh</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--graphs-->
+        {#        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>#}
+        {#        <script type="text/javascript">#}
+        {#            google.charts.load('current', {'packages': ['corechart']});#}
+        {#            google.charts.setOnLoadCallback(drawChart);#}
+        {##}
+        {#            function drawChart() {#}
+        {#                var json = $.ajax({#}
+        {#                    url: "/system/get_daily_consumption",#}
+        {#                    dataType: "json",#}
+        {#                    success: function (jsonData) {#}
+        {#                        var array = [];#}
+        {#                        array.push(["Hour", "Power"])#}
+        {##}
+        {#                        for (var i in jsonData)#}
+        {#                            array.push([i, jsonData[i]]);#}
+        {##}
+        {#                        var data = new google.visualization.arrayToDataTable(array);#}
+        {##}
+        {#                        var options = {#}
+        {#                            title: 'consumption',#}
+        {#                            curveType: 'function',#}
+        {#                            hAxis: {title: 'Time (hours)'},#}
+        {#                            vAxis: {title: 'consumpsion (KW/H)'},#}
+        {#                            backgroundColor: {fill: "#f1f1f1"}#}
+        {#                        };#}
+        {##}
+        {#                        var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));#}
+        {##}
+        {#                        chart.draw(data, options);#}
+        {#                    }#}
+        {#                });#}
+        {#            }#}
+        {##}
+        {#            setInterval(drawChart, 5000); // The interval set to 5 seconds#}
+        {#        </script>#}
+
+        <!--daily use graph-->
+        {#        <div id="curve_chart" style="width: 800; height: 450px;"></div>#}
+
+        <div id="daily" style="height: 370px; width: 100%;"></div>
+    </div>
+
+    <!-- Consumption Section -->
+    <div class="w3-container" style="padding:85px 8px 120px" id=consumption>
+        <!-- yearly graph-->
+        <div id="yearly" class="consumptionGraph"></div>
+
+        <!--monthly graph-->
         <div id="monthly" class="consumptionGraph"></div>
 
         <!--Switch between monthly to yearly graph-->
