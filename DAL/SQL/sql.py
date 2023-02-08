@@ -1,7 +1,6 @@
 import sqlite3
 from sqlite3 import Error
 from datetime import datetime
-import calendar
 import os
 
 # get db file path
@@ -529,7 +528,7 @@ def get_daily_consumption(user_id, date):
     """
     Descrription: get summary of daily consumption.
     :param user_id: connected user id.
-    :param full_date: in format of YYYY-MM-DD
+    :param date: in format of YYYY-MM-DD
     :return: JSON data in format of {i, [Date, Power, Voltage, Currency]}
     """
 
@@ -628,9 +627,9 @@ def get_monthly_consumption(user_id):
             cursor = sqlHandler.execute(query)
             rows = cursor.fetchall()
             if rows[0][0] is None:
-                consumption[dayFilter[2:]] = 0
+                consumption[int(dayFilter[2:])] = 0
             else:
-                consumption[dayFilter[2:]] = rows[0][0]
+                consumption[int(dayFilter[2:])] = rows[0][0]
 
         return consumption
 
@@ -652,14 +651,14 @@ def get_yearly_consumption(user_id):
             rows = cursor.fetchall()
             if rows[0][0] is None:
                 if f[2] != '0':
-                    consumption[calendar.month_name[int(f[2:4])]] = 0
+                    consumption[int(f[2:4])] = 0
                 else:
-                    consumption[calendar.month_name[int(f[3])]] = 0
+                    consumption[int(f[3])] = 0
             else:
                 if f[2] != '0':
-                    consumption[calendar.month_name[int(f[2:4])]] = rows[0][0]
+                    consumption[int(f[2:4])] = rows[0][0]
                 else:
-                    consumption[calendar.month_name[int(f[3])]] = rows[0][0]
+                    consumption[int(f[3])] = rows[0][0]
 
         return consumption
 
