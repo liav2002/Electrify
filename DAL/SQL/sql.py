@@ -623,7 +623,7 @@ def get_monthly_consumption(user_id):
                    '%-25', '%-26', '%-27', '%-28', '%-29', '%-30', '%-31']
 
         for dayFilter in filters:
-            query = f"SELECT SUM(Power) FROM Samples WHERE UserID={user_id} AND date(Time) LIKE '{monthFilter}' AND date(Time) LIKE '{dayFilter}';"
+            query = f"SELECT SUM(Power) / COUNT(Power) FROM Samples WHERE UserID={user_id} AND date(Time) LIKE '{monthFilter}' AND date(Time) LIKE '{dayFilter}';"
             cursor = sqlHandler.execute(query)
             rows = cursor.fetchall()
             if rows[0][0] is None:
@@ -646,7 +646,7 @@ def get_yearly_consumption(user_id):
                    '%-07-%', '%-08-%', '%-09-%', '%-10-%', '%-11-%', '%-12-%']
 
         for f in filters:
-            query = f"SELECT SUM(Power) FROM Samples WHERE UserID={user_id} AND date(Time) LIKE '{f}';"
+            query = f"SELECT SUM(Power) / COUNT(Power) FROM Samples WHERE UserID={user_id} AND date(Time) LIKE '{f}';"
             cursor = sqlHandler.execute(query)
             rows = cursor.fetchall()
             if rows[0][0] is None:
