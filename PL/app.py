@@ -4,7 +4,7 @@ from flask import Flask, render_template, url_for, flash, redirect
 from forms import RegistrationForm, LoginForm, AccountForm
 
 from DAL.SQL.sql import add_user, add_credit, add_battery, \
-    get_user_id_by_email, get_number_of_batteries, check_login_fields, \
+    get_user_id_by_email, get_number_of_batteries, check_login_fields, get_battery_capacity, get_battery_id, \
     get_daily_consumption, get_current_measure, get_monthly_consumption, get_yearly_consumption
 from DAL.Entities.User import User
 from DAL.Entities.Credit import Credit
@@ -23,6 +23,11 @@ user_id = 0
 @app.route("/")
 def home():
     return render_template('home.html', isLoggedIn=user_id != 0)
+
+
+@app.route("/system/get_battery_capacity", methods=['GET'])
+def battery_capacity():
+    return get_battery_capacity(get_battery_id(user_id))  # battery Xpath: /html/body/div[2]/div[1]/div[1]/div/div/div
 
 
 @app.route("/system/get_summary_daily_consumption", methods=['GET'])
