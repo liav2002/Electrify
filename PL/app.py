@@ -1,3 +1,5 @@
+# python imports
+import threading
 import datetime
 
 # setup project path directories
@@ -13,12 +15,8 @@ sysPath.append(BLPath)
 for place in sys.path:
     sysPath.append(place)
 sys.path = sysPath
-for place in sys.path:
-    print(place)
-print("finish setup, start application..")
-print("")
-print("")
 
+# web application imports
 from flask import Flask, render_template, url_for, flash, redirect
 from forms import RegistrationForm, LoginForm, AccountForm
 
@@ -31,6 +29,7 @@ from DAL.Entities.Battery import Battery
 
 from BL import Secure
 from BL.os_detect import is_raspberrypi
+from BL.INA219Handler import fill_samples
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '584107ac33a499cb87847a6265f3bc1be'
@@ -304,7 +303,9 @@ def login():
 
             if RASPBERRY_PI:
                 # TODO: run background thread to use INA219 for measure Voltage, Power and update battery capacity
-                pass
+                print('Starting background task...')
+                daemon = threading.Thread(target=fill_samples, args=(user_id,), daemon=True, name='Monitor')
+                daemon.start()
 
             return redirect(url_for('system'))
         else:
