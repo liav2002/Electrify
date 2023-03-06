@@ -69,8 +69,6 @@
                 BATTERY</a>
             <a href="{{ url_for('system') + '#consumption' }}" class="w3-bar-item w3-button"><i
                     class="fa fa-line-chart"></i> CONSUMPTION</a>
-            <a href="{{ url_for('system') + '#insight' }}" class="w3-bar-item w3-button"><i
-                    class="fa fa-lightbulb-o"></i> INSIGHT</a>
             <a href="{{ url_for('system') + '#my-account' }}" class="w3-bar-item w3-button"><i class="fa fa-user"></i>
                 MY-ACCOUNT</a>
             <a href="{{ url_for('logout') }}" class="w3-bar-item w3-button"><i class="fa fa-sign-out"></i> LOGOUT</a>
@@ -104,7 +102,6 @@
         {% if isLoggedIn %}
             <a href="{{ url_for('system') }}" class="w3-bar-item w3-button">BATTERY</a>
             <a href="{{ url_for('system') }}" class="w3-bar-item w3-button">CONSUMPTION</a>
-            <a href="{{ url_for('system') }}" class="w3-bar-item w3-button">INSIGHT</a>
             <a href="{{ url_for('system') }}" class="w3-bar-item w3-button">MY-ACCOUNT</a>
             <a href="{{ url_for('logout') }}" class="w3-bar-item w3-button">LOGOUT</a>
         {% else %}
