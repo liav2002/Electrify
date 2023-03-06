@@ -1,5 +1,24 @@
 import datetime
 
+# setup project path directories
+import sys
+import os
+projectDirPath = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+DalPath = projectDirPath + "/DAL"
+BLPath = projectDirPath + "/BL"
+sysPath = []
+sysPath.append(projectDirPath)
+sysPath.append(DalPath)
+sysPath.append(BLPath)
+for place in sys.path:
+    sysPath.append(place)
+sys.path = sysPath
+for place in sys.path:
+    print(place)
+print("finish setup, start application..")
+print("")
+print("")
+
 from flask import Flask, render_template, url_for, flash, redirect
 from forms import RegistrationForm, LoginForm, AccountForm
 
