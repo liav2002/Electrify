@@ -34,11 +34,11 @@ def fill_samples(user_id):
             """sample = [sample_id, user_id, datetime.datetime.now(), round(ina_handler.getPower(), 3),
                       round(ina_handler.getVoltage(), 3)]"""
 
-            powerValue = 800
-            voltageValue = 600
+            powerValue = 15
+            voltageValue = 12
 
-            deltaPower = -1 + uniform(0, 5)
-            deltaVoltage = -1 + uniform(0, 5)
+            deltaPower = -1 + uniform(0, 2)
+            deltaVoltage = -1 + uniform(0, 2)
 
             sample = [sample_id, user_id, datetime.datetime.now(), round(powerValue + deltaPower, 3),
                       round(voltageValue + deltaVoltage, 3)]
