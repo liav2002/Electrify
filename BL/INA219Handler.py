@@ -4,6 +4,20 @@ from time import sleep
 from ina219 import INA219
 from random import uniform
 
+# setup project path directories
+import sys
+import os
+projectDirPath = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+DalPath = projectDirPath + "/DAL"
+BLPath = projectDirPath + "/BL"
+sysPath = []
+sysPath.append(projectDirPath)
+sysPath.append(DalPath)
+sysPath.append(BLPath)
+for place in sys.path:
+    sysPath.append(place)
+sys.path = sysPath
+
 SHUNT_OHMS = 0.1
 MAX_EXPECTED_AMPS = 0.2
 ADDRESS = 0x40
