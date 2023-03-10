@@ -217,11 +217,11 @@ def get_number_of_batteries():
     return result
 
 
-def get_number_of_samples(user_id):
+def get_number_of_samples():
     try:
         sqlHandler = create_connection()
 
-        query = f"SELECT COUNT(*) FROM Samples WHERE UserID={user_id};"
+        query = f"SELECT COUNT(*) FROM Samples;"
         cursor = sqlHandler.execute(query)
         result = cursor.fetchone()[0]
 

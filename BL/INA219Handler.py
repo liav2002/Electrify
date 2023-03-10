@@ -22,6 +22,8 @@ SHUNT_OHMS = 0.1
 MAX_EXPECTED_AMPS = 0.2
 ADDRESS = 0x40
 
+ID = int(sys.argv[1])
+
 
 class INA219Handler:
     def __init__(self, address=ADDRESS, shunt_ohms=SHUNT_OHMS, max_expected_amps=MAX_EXPECTED_AMPS):
@@ -39,7 +41,7 @@ class INA219Handler:
 
 
 def fill_samples(user_id):
-    sample_id = get_number_of_samples(user_id)  # starting id from zero. next id equal to number of samples.
+    sample_id = get_number_of_samples()  # starting id from zero. next id equal to number of samples.
     # ina_handler = INA219Handler()
 
     try:
@@ -48,8 +50,8 @@ def fill_samples(user_id):
             """sample = [sample_id, user_id, datetime.datetime.now(), round(ina_handler.getPower(), 3),
                       round(ina_handler.getVoltage(), 3)]"""
 
-            powerValue = 0.09
-            voltageValue = 0.33
+            powerValue = 2.9
+            voltageValue = 10
 
             deltaPower = -0.003 + uniform(0.001, 0.003)
             deltaVoltage = -0.003 + uniform(0.005, 0.01)
@@ -74,4 +76,4 @@ def fill_samples(user_id):
         print("ERROR:fill_samples: " + str(e))
 
 
-fill_samples(12345677)
+fill_samples(ID)
